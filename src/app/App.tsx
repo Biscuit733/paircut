@@ -1,0 +1,85 @@
+import { useEffect, useState } from 'react'
+import { Crop, Grid2X2, Images, LayoutTemplate, Scissors, Settings2 } from 'lucide-react'
+import { Button } from '../components/ui/Button'
+import { Toast, type ToastState } from '../components/ui/Toast'
+import { CoupleCropper } from '../features/couple-avatar/components/CoupleCropper'
+import { SingleCropper } from '../features/cropper/components/SingleCropper'
+import { TemplateEditor } from '../features/couple-template/components/TemplateEditor'
+import { CollageEditor } from '../features/collage/components/CollageEditor'
+import { useCoupleTemplateStore } from '../features/couple-template/store/useCoupleTemplateStore'
+
+type AppMode = 'couple' | 'single' | 'template' | 'collage'
+
+const modes: Array<{ id: AppMode; label: string; icon: React.ReactNode }> = [
+  { id: 'couple', label: '情头裁剪', icon: <Scissors size={17} /> },
+  { id: 'single', label: '单图裁剪', icon: <Crop size={17} /> },
+  { id: 'template', label: '情头模板', icon: <LayoutTemplate size={17} /> },
+  { id: 'collage', label: '智能拼图', icon: <Grid2X2 size={17} /> },
+]
+
+export function App() {
+  const [mode, setMode] = useState<AppMode>('couple')
+  const [toast, setToast] = useState<ToastState>(null)
+  const { undo, redo } = useCoupleTemplateStore()
+
+  useEffect(() => {
+    if (!toast) return
+    const timer = window.setTimeout(() => setToast(null), 2600)
+    return () => window.clearTimeout(timer)
+  }, [toast])
+
+  useEffect(() => {
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (!event.ctrlKey || mode !== 'template') return
+      if (event.key.toLowerCase() === 'z' && event.shiftKey) {
+        event.preventDefault()
+        redo()
+      } else if (event.key.toLowerCase() === 'z') {
+        event.preventDefault()
+        undo()
+      } else if (event.key.toLowerCase() === 'y') {
+        event.preventDefault()
+        redo()
+      }
+    }
+    window.addEventListener('keydown', onKeyDown)
+    return () => window.removeEventListener('keydown', onKeyDown)
+  }, [mode, redo, undo])
+
+  return (
+    <div className="min-h-screen">
+      <header className="sticky top-0 z-40 border-b border-[#e5e5e5] bg-[#f5f4f0]/95 backdrop-blur">
+        <div className="mx-auto flex max-w-[1500px] flex-col gap-3 px-4 py-4 lg:flex-row lg:items-center lg:justify-between">
+          <div className="flex items-center gap-3">
+            <div className="grid h-11 w-11 place-items-center rounded-xl bg-[#171717] text-white">
+              <Images size={22} />
+            </div>
+            <div>
+              <h1 className="text-xl font-semibold tracking-normal text-[#171717]">PairCut 情头工坊</h1>
+              <p className="text-xs text-[#737373]">本地裁剪情侣头像、展示模板与智能拼图</p>
+            </div>
+          </div>
+          <nav className="flex flex-wrap gap-2">
+            {modes.map((item) => (
+              <Button key={item.id} icon={item.icon} variant={mode === item.id ? 'primary' : 'secondary'} onClick={() => setMode(item.id)}>
+                {item.label}
+              </Button>
+            ))}
+            <Button icon={<Settings2 size={17} />} variant="ghost" onClick={() => setToast({ type: 'info', message: '设置项会随近期导出偏好自动保存，完整设置页留给下一版。' })}>
+              设置
+            </Button>
+          </nav>
+        </div>
+      </header>
+
+      <div className="mx-auto max-w-[1500px] px-4 py-5">
+        {mode === 'couple' ? <CoupleCropper setToast={setToast} onOpenTemplates={() => setMode('template')} /> : null}
+        {mode === 'single' ? <SingleCropper setToast={setToast} /> : null}
+        {mode === 'template' ? <TemplateEditor setToast={setToast} onBack={() => setMode('couple')} /> : null}
+        {mode === 'collage' ? <CollageEditor setToast={setToast} /> : null}
+      </div>
+      <Toast toast={toast} />
+    </div>
+  )
+}
+
