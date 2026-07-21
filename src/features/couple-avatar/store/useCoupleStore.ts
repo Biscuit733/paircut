@@ -1,0 +1,77 @@
+import { create } from 'zustand'
+import type { CropConfig } from '../../cropper/types'
+import type { ImageAsset } from '../../uploader/types'
+import type { CoupleAvatarKey } from '../types'
+import { defaultCropConfig } from '../../cropper/utils/cropImage'
+import { revokeImageAsset } from '../../../utils/image'
+
+type CoupleStore = {
+  sourceImage: ImageAsset | null
+  singleImage: ImageAsset | null
+  activeAvatar: CoupleAvatarKey
+  avatarA: CropConfig
+  avatarB: CropConfig
+  singleCrop: CropConfig
+  setSourceImage: (asset: ImageAsset) => void
+  setSingleImage: (asset: ImageAsset) => void
+  setActiveAvatar: (avatar: CoupleAvatarKey) => void
+  updateAvatar: (avatar: CoupleAvatarKey, patch: Partial<CropConfig>) => void
+  updateSingleCrop: (patch: Partial<CropConfig>) => void
+  splitEvenly: () => void
+  swapAvatars: () => void
+  copyAToB: () => void
+  resetAvatar: (avatar: CoupleAvatarKey) => void
+}
+
+function cropForSide(side: CoupleAvatarKey): CropConfig {
+  return defaultCropConfig({
+    crop: { x: side === 'a' ? 70 : -70, y: 0 },
+    croppedAreaPixels: null,
+  })
+}
+
+export const useCoupleStore = create<CoupleStore>((set) => ({
+  sourceImage: null,
+  singleImage: null,
+  activeAvatar: 'a',
+  avatarA: cropForSide('a'),
+  avatarB: cropForSide('b'),
+  singleCrop: defaultCropConfig({ shape: 'square' }),
+  setSourceImage: (asset) =>
+    set((state) => {
+      revokeImageAsset(state.sourceImage)
+      return {
+        sourceImage: asset,
+        activeAvatar: 'a',
+        avatarA: cropForSide('a'),
+        avatarB: cropForSide('b'),
+      }
+    }),
+  setSingleImage: (asset) =>
+    set((state) => {
+      revokeImageAsset(state.singleImage)
+      return { singleImage: asset, singleCrop: defaultCropConfig({ shape: 'square' }) }
+    }),
+  setActiveAvatar: (activeAvatar) => set({ activeAvatar }),
+  updateAvatar: (avatar, patch) =>
+    set((state) =>
+      avatar === 'a'
+        ? { avatarA: { ...state.avatarA, ...patch } }
+        : { avatarB: { ...state.avatarB, ...patch } },
+    ),
+  updateSingleCrop: (patch) => set((state) => ({ singleCrop: { ...state.singleCrop, ...patch } })),
+  splitEvenly: () =>
+    set((state) => ({
+      avatarA: { ...state.avatarA, crop: { x: 70, y: 0 }, zoom: 1 },
+      avatarB: { ...state.avatarB, crop: { x: -70, y: 0 }, zoom: 1 },
+    })),
+  swapAvatars: () => set((state) => ({ avatarA: state.avatarB, avatarB: state.avatarA })),
+  copyAToB: () => set((state) => ({ avatarB: { ...state.avatarA } })),
+  resetAvatar: (avatar) =>
+    set((state) =>
+      avatar === 'a'
+        ? { avatarA: cropForSide('a') }
+        : { avatarB: cropForSide('b'), activeAvatar: state.activeAvatar },
+    ),
+}))
+
