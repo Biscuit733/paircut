@@ -52,7 +52,7 @@ export function CollageEditor({ setToast }: { setToast: (toast: ToastState) => v
     setIsExporting(true)
     try {
       const blob = await renderCollageToBlob({ images, template, states: imageStates, style, width: output.width, height: output.height, format, quality })
-      downloadBlob(blob, `paircut-collage.${extensionForFormat(format)}`)
+      downloadBlob(blob, `biscuit-collage.${extensionForFormat(format)}`)
       setToast({ type: 'success', message: `拼图已导出：${output.width} x ${output.height}` })
     } catch (caught) {
       setToast({ type: 'error', message: caught instanceof Error ? caught.message : '拼图导出失败。' })

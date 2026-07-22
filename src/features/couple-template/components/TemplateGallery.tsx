@@ -15,8 +15,10 @@ export function TemplateGallery() {
               .map((template) => (
                 <button
                   key={template.id}
-                  className={`grid gap-2 rounded-xl border p-2 text-left transition-colors ${
-                    selectedTemplateId === template.id ? 'border-[#ff6b6b] bg-[#fff1f1]' : 'border-[#e5e5e5] bg-white hover:bg-[#fbfaf7]'
+                  className={`grid gap-2 rounded-lg border p-2 text-left transition ${
+                    selectedTemplateId === template.id
+                      ? 'border-[#ff6b6b] bg-white shadow-sm ring-1 ring-[#ff6b6b]/35'
+                      : 'border-[#e5e5e5] bg-white hover:border-[#d7d7d7] hover:bg-[#fbfaf7]'
                   }`}
                   type="button"
                   onClick={() => setTemplate(template.id)}
@@ -31,4 +33,3 @@ export function TemplateGallery() {
     </div>
   )
 }
-

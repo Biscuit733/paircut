@@ -35,7 +35,7 @@ export function CoupleCropper({ onOpenTemplates, setToast }: CoupleCropperProps)
   const [guide, setGuide] = useState<'grid' | 'cross' | 'safe' | 'none'>('grid')
   const [format, setFormat] = useState<ExportFormat>('png')
   const [quality, setQuality] = useState(0.92)
-  const [workName, setWorkName] = useState('paircut')
+  const [workName, setWorkName] = useState('biscuit-avatar')
   const [isExporting, setIsExporting] = useState(false)
   const [avatarSetUrls, setAvatarSetUrls] = useState<{
     aCircle: string
@@ -94,7 +94,7 @@ export function CoupleCropper({ onOpenTemplates, setToast }: CoupleCropperProps)
         format: 'png',
         quality,
       })
-      downloadBlob(blob, `${sanitizeFileName(workName)}-paircut.zip`)
+      downloadBlob(blob, `${sanitizeFileName(workName)}-biscuit.zip`)
       setToast({ type: 'success', message: '整套情头 ZIP 已生成：原图、模板图、圆形/方形 A/B 头像都在里面。' })
     } catch (caught) {
       setToast({ type: 'error', message: caught instanceof Error ? caught.message : 'ZIP 导出失败。' })
@@ -107,7 +107,7 @@ export function CoupleCropper({ onOpenTemplates, setToast }: CoupleCropperProps)
     <div className="grid gap-4 lg:grid-cols-[300px_minmax(0,1fr)_300px]">
       <Panel className="grid content-start gap-4">
         <ImageUploader
-          description="上传一张 4:3 情侣原图，PairCut 会给 A/B 头像生成左右两侧的初始裁剪位置。"
+          description="上传一张 4:3 情侣原图，Biscuit 情头工坊会给 A/B 头像生成左右两侧的初始裁剪位置。"
           label="上传情侣原图"
           onImages={(assets) => setSourceImage(assets[0])}
         />

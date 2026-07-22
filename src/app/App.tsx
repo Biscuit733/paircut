@@ -55,8 +55,8 @@ export function App() {
               <Images size={22} />
             </div>
             <div>
-              <h1 className="text-xl font-semibold tracking-normal text-[#171717]">PairCut 情头工坊</h1>
-              <p className="text-xs text-[#737373]">本地裁剪情侣头像、展示模板与智能拼图</p>
+              <h1 className="text-xl font-semibold tracking-normal text-[#171717]">Biscuit 情头工坊</h1>
+              <p className="text-xs text-[#737373]">本地制作情头、展示模板与甜感拼图</p>
             </div>
           </div>
           <nav className="flex flex-wrap gap-2">
@@ -82,4 +82,3 @@ export function App() {
     </div>
   )
 }
-

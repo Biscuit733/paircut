@@ -9,7 +9,7 @@ import { sanitizeFileName } from '../../utils/file'
 export async function exportCoupleZip(input: CoupleZipInput) {
   const safeName = sanitizeFileName(input.workName)
   const zip = new JSZip()
-  const root = zip.folder('paircut-export')
+  const root = zip.folder('biscuit-avatar-export')
   if (!root) throw new Error('无法创建 ZIP 目录。')
 
   root.folder('original')?.file(`${safeName}-original-${input.sourceImage.name}`, input.sourceImage.file)
@@ -88,7 +88,7 @@ async function makeCouplePreview(sourceImage: CoupleZipInput['sourceImage'], ava
   context.fillStyle = '#171717'
   context.font = '500 34px sans-serif'
   context.textAlign = 'center'
-  context.fillText('PairCut Couple Avatar Preview', 540, 560)
+  context.fillText('Biscuit 情头工坊预览', 540, 560)
   return new Promise<Blob>((resolve, reject) => {
     canvas.toBlob((blob) => (blob ? resolve(blob) : reject(new Error('组合预览导出失败。'))), 'image/png')
   })

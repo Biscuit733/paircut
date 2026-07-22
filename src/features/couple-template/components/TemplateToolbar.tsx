@@ -1,6 +1,5 @@
-import { Download, Eye, EyeOff, Package, Redo2, Undo2, ZoomIn, ZoomOut } from 'lucide-react'
+import { ChevronDown, Download, Eye, EyeOff, Package, Redo2, Undo2, ZoomIn, ZoomOut } from 'lucide-react'
 import { Button } from '../../../components/ui/Button'
-import { Field } from '../../../components/ui/Field'
 import type { ToastState } from '../../../components/ui/Toast'
 import { useCoupleTemplateStore } from '../store/useCoupleTemplateStore'
 import { useCoupleStore } from '../../couple-avatar/store/useCoupleStore'
@@ -8,7 +7,7 @@ import { resolveOutputSize } from '../../../utils/canvas'
 import { downloadBlob, extensionForFormat, sanitizeFileName } from '../../../utils/file'
 import { renderTemplateToBlob } from '../utils/renderTemplate'
 import type { ExportFormat } from '../../cropper/types'
-import { useState } from 'react'
+import { useState, type ReactNode } from 'react'
 import { exportCoupleZip } from '../../export/exportZip'
 
 type TemplateToolbarProps = {
@@ -112,27 +111,27 @@ export function TemplateToolbar({ onBack, setToast }: TemplateToolbarProps) {
           {isWatermarkVisible ? '隐藏水印' : '显示水印'}
         </Button>
       ) : null}
-      <Field label="尺寸">
-        <select className="rounded-lg border border-[#e5e5e5] px-3 py-2" value={exportSize} onChange={(event) => setExportSize(event.target.value)}>
+      <ToolbarSelect label="尺寸">
+        <select className="h-10 min-w-[112px] appearance-none bg-white py-0 pl-3 pr-9 text-sm font-medium text-[#171717] outline-none" value={exportSize} onChange={(event) => setExportSize(event.target.value)}>
           {exportSizes.map((size) => (
             <option key={size} value={size}>
               {size === 'custom' ? '自定义宽度' : exportSizeLabels[size]}
             </option>
           ))}
         </select>
-      </Field>
+      </ToolbarSelect>
       {exportSize === 'custom' ? (
-        <Field label="自定义宽度" hint={`${output.height}px 高`}>
-          <input className="w-28 rounded-lg border border-[#e5e5e5] px-3 py-2" min={360} type="number" value={customWidth} onChange={(event) => setCustomWidth(Number(event.target.value))} />
-        </Field>
+        <ToolbarInput label="宽度" hint={`${output.height}px 高`}>
+          <input className="h-10 w-24 bg-white px-3 text-sm font-medium text-[#171717] outline-none" min={360} type="number" value={customWidth} onChange={(event) => setCustomWidth(Number(event.target.value))} />
+        </ToolbarInput>
       ) : null}
-      <Field label="格式">
-        <select className="rounded-lg border border-[#e5e5e5] px-3 py-2" value={format} onChange={(event) => setFormat(event.target.value as ExportFormat)}>
+      <ToolbarSelect label="格式">
+        <select className="h-10 min-w-[86px] appearance-none bg-white py-0 pl-3 pr-9 text-sm font-medium text-[#171717] outline-none" value={format} onChange={(event) => setFormat(event.target.value as ExportFormat)}>
           <option value="png">PNG</option>
           <option value="jpeg">JPG</option>
           <option value="webp">WebP</option>
         </select>
-      </Field>
+      </ToolbarSelect>
       <Button disabled={!sourceImage || isExporting} icon={<Download size={16} />} variant="primary" onClick={() => void exportTemplate()}>
         导出模板图
       </Button>
@@ -140,5 +139,27 @@ export function TemplateToolbar({ onBack, setToast }: TemplateToolbarProps) {
         导出套装
       </Button>
     </div>
+  )
+}
+
+function ToolbarSelect({ label, children }: { label: string; children: ReactNode }) {
+  return (
+    <label className="group inline-flex h-10 overflow-hidden rounded-lg border border-[#dedede] bg-white shadow-sm transition focus-within:border-[#171717] focus-within:ring-2 focus-within:ring-[#171717]/10">
+      <span className="grid min-w-12 place-items-center border-r border-[#eeeeee] bg-[#fbfaf7] px-3 text-xs font-semibold text-[#737373]">{label}</span>
+      <span className="relative inline-flex items-center">
+        {children}
+        <ChevronDown className="pointer-events-none absolute right-3 text-[#8a8a8a] transition group-focus-within:text-[#171717]" size={15} />
+      </span>
+    </label>
+  )
+}
+
+function ToolbarInput({ label, hint, children }: { label: string; hint: string; children: ReactNode }) {
+  return (
+    <label className="inline-flex h-10 overflow-hidden rounded-lg border border-[#dedede] bg-white shadow-sm transition focus-within:border-[#171717] focus-within:ring-2 focus-within:ring-[#171717]/10">
+      <span className="grid min-w-12 place-items-center border-r border-[#eeeeee] bg-[#fbfaf7] px-3 text-xs font-semibold text-[#737373]">{label}</span>
+      {children}
+      <span className="grid place-items-center border-l border-[#eeeeee] bg-[#fbfaf7] px-3 text-xs text-[#8a8a8a]">{hint}</span>
+    </label>
   )
 }

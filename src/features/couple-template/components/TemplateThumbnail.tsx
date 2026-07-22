@@ -9,6 +9,5 @@ export function TemplateThumbnail({ template }: { template: CouplePosterTemplate
     setUrl(makeTemplateThumbnail(template))
   }, [template])
 
-  return url ? <img alt={template.name} className="aspect-[3/4] w-full rounded-lg object-cover" src={url} /> : null
+  return url ? <img alt={template.name} className="aspect-[3/4] w-full rounded-md bg-[#f7f7f7] object-cover" src={url} /> : null
 }
-

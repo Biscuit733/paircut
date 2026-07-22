@@ -191,6 +191,8 @@ function TextElement({
         fontWeight: element.fontWeight,
         textAlign: element.textAlign,
         letterSpacing: (element.letterSpacing ?? 0) * zoom,
+        lineHeight: element.lineHeight ?? 1.25,
+        overflowWrap: 'break-word',
         textShadow: element.shadowColor
           ? `${(element.shadowOffsetX ?? 0) * zoom}px ${(element.shadowOffsetY ?? 0) * zoom}px ${(element.shadowBlur ?? 0) * zoom}px ${element.shadowColor}`
           : undefined,

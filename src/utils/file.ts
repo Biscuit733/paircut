@@ -4,7 +4,7 @@ function isWindowsInvalidChar(char: string) {
   return invalidWindowsChars.has(char) || char.charCodeAt(0) < 32
 }
 
-export function sanitizeFileName(name: string, fallback = 'paircut-export') {
+export function sanitizeFileName(name: string, fallback = 'biscuit-avatar-export') {
   const cleaned = name
     .trim()
     .split('')

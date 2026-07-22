@@ -17,7 +17,7 @@ export function TemplateInspector() {
         恢复模板默认设置
       </Button>
 
-      {!element ? <p className="rounded-xl bg-[#fbfaf7] p-4 text-sm leading-6 text-[#737373]">点击画布上的文字、头像或色块后，在这里编辑属性。所有文字都可以手动输入修改。</p> : null}
+      {!element ? <p className="rounded-lg bg-[#fbfaf7] p-4 text-sm leading-6 text-[#737373]">点击画布元素后，在这里调整文字、图片和色块。</p> : null}
       {element ? (
         <div className="grid gap-3 border-t border-[#eeeeee] pt-4">
           <div className="flex items-center justify-between gap-3">
