@@ -26,6 +26,7 @@ export async function renderTemplateToCanvas(
   const scaleY = options.height / template.canvasHeight
   context.fillStyle = template.backgroundColor
   context.fillRect(0, 0, options.width, options.height)
+  await document.fonts.ready
 
   for (const element of sortedElements(template.elements)) {
     if (element.type === 'shape') drawShape(context, element, scaleX, scaleY)
