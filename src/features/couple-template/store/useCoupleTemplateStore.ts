@@ -31,7 +31,7 @@ export const useCoupleTemplateStore = create<CoupleTemplateStore>((set, get) => 
   workingTemplate: initialTemplate,
   selectedElementId: null,
   canvasZoom: 0.52,
-  exportSize: '1080x1440',
+  exportSize: '1080x1200',
   customWidth: 1080,
   undoStack: [],
   redoStack: [],

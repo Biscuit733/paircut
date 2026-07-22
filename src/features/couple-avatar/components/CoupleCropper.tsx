@@ -8,7 +8,7 @@ import { useCoupleStore } from '../store/useCoupleStore'
 import { CropEditor } from '../../cropper/components/CropEditor'
 import { CropPreview } from '../../cropper/components/CropPreview'
 import { renderCroppedBlob, renderCroppedDataUrl } from '../../cropper/utils/cropImage'
-import type { ExportFormat } from '../../cropper/types'
+import type { CropConfig, ExportFormat } from '../../cropper/types'
 import { downloadBlob, extensionForFormat, sanitizeFileName } from '../../../utils/file'
 import { exportCoupleZip } from '../../export/exportZip'
 import type { ToastState } from '../../../components/ui/Toast'
@@ -37,23 +37,28 @@ export function CoupleCropper({ onOpenTemplates, setToast }: CoupleCropperProps)
   const [quality, setQuality] = useState(0.92)
   const [workName, setWorkName] = useState('paircut')
   const [isExporting, setIsExporting] = useState(false)
-  const [avatarAUrl, setAvatarAUrl] = useState<string | null>(null)
-  const [avatarBUrl, setAvatarBUrl] = useState<string | null>(null)
+  const [avatarSetUrls, setAvatarSetUrls] = useState<{
+    aCircle: string
+    aSquare: string
+    bCircle: string
+    bSquare: string
+  } | null>(null)
   const activeConfig = activeAvatar === 'a' ? avatarA : avatarB
 
   useEffect(() => {
     let cancelled = false
     if (!sourceImage || !avatarA.croppedAreaPixels || !avatarB.croppedAreaPixels) {
-      setAvatarAUrl(null)
-      setAvatarBUrl(null)
+      setAvatarSetUrls(null)
       return
     }
     const timer = window.setTimeout(() => {
-      void Promise.all([renderCroppedDataUrl(sourceImage, avatarA), renderCroppedDataUrl(sourceImage, avatarB)]).then(([aUrl, bUrl]) => {
-        if (!cancelled) {
-          setAvatarAUrl(aUrl)
-          setAvatarBUrl(bUrl)
-        }
+      void Promise.all([
+        renderCroppedDataUrl(sourceImage, makeAvatarVariant(avatarA, 'circle')),
+        renderCroppedDataUrl(sourceImage, makeAvatarVariant(avatarA, 'square')),
+        renderCroppedDataUrl(sourceImage, makeAvatarVariant(avatarB, 'circle')),
+        renderCroppedDataUrl(sourceImage, makeAvatarVariant(avatarB, 'square')),
+      ]).then(([aCircle, aSquare, bCircle, bSquare]) => {
+        if (!cancelled) setAvatarSetUrls({ aCircle, aSquare, bCircle, bSquare })
       })
     }, 120)
     return () => {
@@ -90,7 +95,7 @@ export function CoupleCropper({ onOpenTemplates, setToast }: CoupleCropperProps)
         quality,
       })
       downloadBlob(blob, `${sanitizeFileName(workName)}-paircut.zip`)
-      setToast({ type: 'success', message: '整套情头 ZIP 已生成。' })
+      setToast({ type: 'success', message: '整套情头 ZIP 已生成：原图、模板图、圆形/方形 A/B 头像都在里面。' })
     } catch (caught) {
       setToast({ type: 'error', message: caught instanceof Error ? caught.message : 'ZIP 导出失败。' })
     } finally {
@@ -157,13 +162,15 @@ export function CoupleCropper({ onOpenTemplates, setToast }: CoupleCropperProps)
         </div>
         <div className="rounded-xl border border-[#e5e5e5] bg-[#f7f7f7] p-3">
           <div className="grid gap-3 rounded-lg bg-white p-3">
-            <div className="flex items-center gap-3">
-              <AvatarBubble url={avatarAUrl} label="A" />
-              <div className="rounded-2xl bg-[#f5f4f0] px-3 py-2 text-xs text-[#525252]">阿棠阿棠，我是小叮</div>
+            <div>
+              <p className="text-sm font-medium text-[#171717]">套装头像预览</p>
+              <p className="mt-1 text-xs text-[#737373]">导出 ZIP 会同时保留圆形和方形 A/B 头像。</p>
             </div>
-            <div className="flex items-center justify-end gap-3">
-              <div className="rounded-2xl bg-[#ffe2e2] px-3 py-2 text-right text-xs text-[#525252]">小叮小叮，阿棠收到！</div>
-              <AvatarBubble url={avatarBUrl} label="B" />
+            <div className="grid grid-cols-4 gap-2">
+              <AvatarBubble url={avatarSetUrls?.aCircle ?? null} label="A圆" shape="circle" />
+              <AvatarBubble url={avatarSetUrls?.aSquare ?? null} label="A方" shape="square" />
+              <AvatarBubble url={avatarSetUrls?.bCircle ?? null} label="B圆" shape="circle" />
+              <AvatarBubble url={avatarSetUrls?.bSquare ?? null} label="B方" shape="square" />
             </div>
           </div>
         </div>
@@ -196,9 +203,19 @@ export function CoupleCropper({ onOpenTemplates, setToast }: CoupleCropperProps)
   )
 }
 
-function AvatarBubble({ url, label }: { url: string | null; label: string }) {
+function makeAvatarVariant(config: CropConfig, shape: 'circle' | 'square'): CropConfig {
+  return {
+    ...config,
+    shape,
+    aspectRatio: 1,
+    outputWidth: 800,
+    outputHeight: 800,
+  }
+}
+
+function AvatarBubble({ url, label, shape }: { url: string | null; label: string; shape: 'circle' | 'square' }) {
   return (
-    <span className="grid h-12 w-12 shrink-0 place-items-center overflow-hidden rounded-full bg-[#eee] text-xs text-[#8a8a8a]">
+    <span className={`grid aspect-square w-full shrink-0 place-items-center overflow-hidden bg-[#eee] text-xs text-[#8a8a8a] shadow-sm ${shape === 'circle' ? 'rounded-full' : 'rounded-xl'}`}>
       {url ? <img alt={`头像 ${label}`} className="h-full w-full object-cover" src={url} /> : label}
     </span>
   )

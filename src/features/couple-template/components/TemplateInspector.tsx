@@ -17,7 +17,7 @@ export function TemplateInspector() {
         恢复模板默认设置
       </Button>
 
-      {!element ? <p className="rounded-xl bg-[#fbfaf7] p-4 text-sm text-[#737373]">点击画布上的文字、头像或色块后，在这里编辑属性。</p> : null}
+      {!element ? <p className="rounded-xl bg-[#fbfaf7] p-4 text-sm leading-6 text-[#737373]">点击画布上的文字、头像或色块后，在这里编辑属性。所有文字都可以手动输入修改。</p> : null}
       {element ? (
         <div className="grid gap-3 border-t border-[#eeeeee] pt-4">
           <div className="flex items-center justify-between gap-3">
@@ -40,8 +40,9 @@ export function TemplateInspector() {
               </Field>
               <Field label="字体风格">
                 <select className="rounded-lg border border-[#e5e5e5] px-3 py-2" value={element.fontFamily} onChange={(event) => updateElement(element.id, { fontFamily: event.target.value })}>
-                  <option value={'STXingkai, KaiTi, "Microsoft YaHei", serif'}>手写行楷</option>
-                  <option value={'"Segoe Script", "Brush Script MT", "Lucida Handwriting", cursive'}>英文花体</option>
+                  <option value={'YouYuan, "Microsoft YaHei", sans-serif'}>圆体手写</option>
+                  <option value={'"Lucida Handwriting", "Comic Sans MS", cursive'}>手写花体</option>
+                  <option value={'"Comic Sans MS", "Trebuchet MS", sans-serif'}>手写英文</option>
                   <option value={'"Arial Black", Impact, "Microsoft YaHei", sans-serif'}>酷黑标题</option>
                   <option value={'YouYuan, "Microsoft YaHei", sans-serif'}>圆润小字</option>
                   <option value={'serif'}>复古衬线</option>
@@ -85,6 +86,9 @@ export function TemplateInspector() {
               <Field label="圆角" hint={`${element.borderRadius ?? 0}px`}>
                 <input className="range" max={100} min={0} type="range" value={element.borderRadius ?? 0} onChange={(event) => updateElement(element.id, { borderRadius: Number(event.target.value) })} />
               </Field>
+              <Field label="卡片阴影" hint={`${element.shadowBlur ?? 0}px`}>
+                <input className="range" max={80} min={0} type="range" value={element.shadowBlur ?? 0} onChange={(event) => updateElement(element.id, { shadowBlur: Number(event.target.value), shadowColor: element.shadowColor ?? 'rgba(0,0,0,0.16)', shadowOffsetY: Number(event.target.value) > 0 ? (element.shadowOffsetY ?? 10) : 0 })} />
+              </Field>
             </>
           ) : null}
           {element.type === 'image' ? (
@@ -97,6 +101,17 @@ export function TemplateInspector() {
               </Field>
               <Field label="边框颜色">
                 <input className="h-10 rounded-lg border border-[#e5e5e5] px-2" type="color" value={element.borderColor ?? '#ffffff'} onChange={(event) => updateElement(element.id, { borderColor: event.target.value })} />
+              </Field>
+              <div className="grid grid-cols-2 gap-3">
+                <Field label="阴影颜色">
+                  <input className="h-10 rounded-lg border border-[#e5e5e5] px-2" type="color" value={normalizeColor(element.shadowColor) ?? '#171717'} onChange={(event) => updateElement(element.id, { shadowColor: event.target.value })} />
+                </Field>
+                <Field label="阴影下移">
+                  <input className="rounded-lg border border-[#e5e5e5] px-3 py-2" type="number" value={element.shadowOffsetY ?? 0} onChange={(event) => updateElement(element.id, { shadowOffsetY: Number(event.target.value) })} />
+                </Field>
+              </div>
+              <Field label="图片阴影" hint={`${element.shadowBlur ?? 0}px`}>
+                <input className="range" max={80} min={0} type="range" value={element.shadowBlur ?? 0} onChange={(event) => updateElement(element.id, { shadowBlur: Number(event.target.value), shadowColor: element.shadowColor ?? 'rgba(0,0,0,0.25)' })} />
               </Field>
               <ImageAdjustmentFields id={element.id} adjustment={element.adjustment ?? { scale: 1, offsetX: 0, offsetY: 0, rotation: 0, flipX: false, flipY: false }} />
             </>

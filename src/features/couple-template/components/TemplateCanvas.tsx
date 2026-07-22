@@ -12,8 +12,10 @@ import { useCoupleTemplateStore } from '../store/useCoupleTemplateStore'
 
 type TemplateCanvasProps = {
   template: CouplePosterTemplate
-  sourceUrls: Record<'original' | 'avatarA' | 'avatarB', string | null>
+  sourceUrls: TemplateCanvasSourceUrls
 }
+
+type TemplateCanvasSourceUrls = Record<'original' | 'avatarACircle' | 'avatarASquare' | 'avatarBCircle' | 'avatarBSquare', string | null>
 
 type DragState = {
   id: string
@@ -77,7 +79,7 @@ function TemplateElementView({
 }: {
   element: CoupleTemplateElement
   isSelected: boolean
-  sourceUrls: Record<'original' | 'avatarA' | 'avatarB', string | null>
+  sourceUrls: TemplateCanvasSourceUrls
   zoom: number
   onSelect: (element: CoupleTemplateElement) => void
   onStartDrag: (event: React.PointerEvent<HTMLDivElement>, element: CoupleTemplateElement) => void
@@ -113,7 +115,7 @@ function ImageElement({
 }: {
   element: TemplateImageElement
   isSelected: boolean
-  sourceUrls: Record<'original' | 'avatarA' | 'avatarB', string | null>
+  sourceUrls: TemplateCanvasSourceUrls
   style: React.CSSProperties
   zoom: number
   onSelect: (element: CoupleTemplateElement) => void
@@ -121,11 +123,19 @@ function ImageElement({
 }) {
   const radius = element.shape === 'circle' ? '999px' : element.shape === 'rounded-rectangle' ? `${(element.borderRadius ?? 24) * zoom}px` : 0
   const adjustment: TemplateImageAdjustment = element.adjustment ?? { scale: 1, offsetX: 0, offsetY: 0, rotation: 0, flipX: false, flipY: false }
-  const url = element.source === 'original' ? sourceUrls.original : element.source === 'avatarA' ? sourceUrls.avatarA : sourceUrls.avatarB
+  const url = resolvePreviewUrl(element, sourceUrls)
   return (
     <div
       className={baseClass(isSelected)}
-      style={{ ...style, borderRadius: radius, border: element.borderWidth ? `${element.borderWidth * zoom}px solid ${element.borderColor ?? '#fff'}` : undefined, overflow: 'hidden' }}
+      style={{
+        ...style,
+        borderRadius: radius,
+        border: element.borderWidth ? `${element.borderWidth * zoom}px solid ${element.borderColor ?? '#fff'}` : undefined,
+        boxShadow: element.shadowColor
+          ? `${(element.shadowOffsetX ?? 0) * zoom}px ${(element.shadowOffsetY ?? 0) * zoom}px ${(element.shadowBlur ?? 0) * zoom}px ${element.shadowColor}`
+          : undefined,
+        overflow: 'hidden',
+      }}
       onPointerDown={(event) => {
         onSelect(element)
         onStartDrag(event, element)
@@ -146,6 +156,13 @@ function ImageElement({
       )}
     </div>
   )
+}
+
+function resolvePreviewUrl(element: TemplateImageElement, sourceUrls: TemplateCanvasSourceUrls) {
+  if (element.source === 'original') return sourceUrls.original
+  if (element.source === 'avatarA') return element.shape === 'circle' ? sourceUrls.avatarACircle : sourceUrls.avatarASquare
+  if (element.source === 'avatarB') return element.shape === 'circle' ? sourceUrls.avatarBCircle : sourceUrls.avatarBSquare
+  return null
 }
 
 function TextElement({
@@ -214,6 +231,9 @@ function ShapeElement({
         borderRadius: element.shape === 'circle' ? '999px' : `${(element.borderRadius ?? 0) * zoom}px`,
         opacity: element.opacity ?? 1,
         border: element.strokeWidth ? `${element.strokeWidth * zoom}px solid ${element.stroke ?? element.fill}` : undefined,
+        boxShadow: element.shadowColor
+          ? `${(element.shadowOffsetX ?? 0) * zoom}px ${(element.shadowOffsetY ?? 0) * zoom}px ${(element.shadowBlur ?? 0) * zoom}px ${element.shadowColor}`
+          : undefined,
       }}
       onPointerDown={(event) => {
         onSelect(element)

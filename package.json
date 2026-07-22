@@ -12,7 +12,6 @@
   },
   "dependencies": {
     "clsx": "^2.1.1",
-    "fabric": "^7.4.0",
     "jszip": "^3.10.1",
     "lucide-react": "^1.25.0",
     "react": "^19.2.7",

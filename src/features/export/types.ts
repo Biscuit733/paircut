@@ -10,5 +10,8 @@ export type CoupleZipInput = {
   format: ExportFormat
   quality: number
   template?: CouplePosterTemplate
+  templateOutput?: {
+    width: number
+    height: number
+  }
 }
-

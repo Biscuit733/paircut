@@ -59,6 +59,10 @@ function drawShape(context: CanvasRenderingContext2D, element: TemplateShapeElem
   context.fillStyle = element.fill
   context.strokeStyle = element.stroke ?? element.fill
   context.lineWidth = (element.strokeWidth ?? 0) * Math.max(scaleX, scaleY)
+  context.shadowColor = element.shadowColor ?? 'transparent'
+  context.shadowBlur = (element.shadowBlur ?? 0) * Math.max(scaleX, scaleY)
+  context.shadowOffsetX = (element.shadowOffsetX ?? 0) * scaleX
+  context.shadowOffsetY = (element.shadowOffsetY ?? 0) * scaleY
   if (element.shape === 'circle') {
     context.beginPath()
     context.ellipse(x + width / 2, y + height / 2, width / 2, height / 2, 0, 0, Math.PI * 2)
@@ -132,6 +136,7 @@ async function drawImageElement(
   const source = await resolveTemplateSource(element, sources, Math.max(scaleX, scaleY) * 2)
   const adjustment = element.adjustment ?? { scale: 1, offsetX: 0, offsetY: 0, rotation: 0, flipX: false, flipY: false }
   context.save()
+  drawImageShadow(context, element, x, y, width, height, Math.max(scaleX, scaleY), scaleX, scaleY)
   clipImageShape(context, element, x, y, width, height, Math.max(scaleX, scaleY))
   const rect =
     element.objectFit === 'contain'
@@ -158,7 +163,43 @@ async function drawImageElement(
   }
 }
 
+function drawImageShadow(
+  context: CanvasRenderingContext2D,
+  element: TemplateImageElement,
+  x: number,
+  y: number,
+  width: number,
+  height: number,
+  scale: number,
+  scaleX: number,
+  scaleY: number,
+) {
+  if (!element.shadowColor || !element.shadowBlur) return
+  context.save()
+  context.shadowColor = element.shadowColor
+  context.shadowBlur = element.shadowBlur * scale
+  context.shadowOffsetX = (element.shadowOffsetX ?? 0) * scaleX
+  context.shadowOffsetY = (element.shadowOffsetY ?? 0) * scaleY
+  context.fillStyle = 'rgba(0,0,0,0.22)'
+  buildImagePath(context, element, x, y, width, height, scale)
+  context.fill()
+  context.restore()
+}
+
 function clipImageShape(
+  context: CanvasRenderingContext2D,
+  element: TemplateImageElement,
+  x: number,
+  y: number,
+  width: number,
+  height: number,
+  scale: number,
+) {
+  buildImagePath(context, element, x, y, width, height, scale)
+  context.clip()
+}
+
+function buildImagePath(
   context: CanvasRenderingContext2D,
   element: TemplateImageElement,
   x: number,
@@ -170,16 +211,13 @@ function clipImageShape(
   context.beginPath()
   if (element.shape === 'circle') {
     context.ellipse(x + width / 2, y + height / 2, width / 2, height / 2, 0, 0, Math.PI * 2)
-    context.clip()
     return
   }
   if (element.shape === 'rounded-rectangle') {
     applyRoundedClip(context, x, y, width, height, (element.borderRadius ?? 24) * scale)
-    context.clip()
     return
   }
   context.rect(x, y, width, height)
-  context.clip()
 }
 
 function getContainRect(sourceRatio: number, targetWidth: number, targetHeight: number) {

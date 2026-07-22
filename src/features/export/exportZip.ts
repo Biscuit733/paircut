@@ -13,15 +13,23 @@ export async function exportCoupleZip(input: CoupleZipInput) {
   if (!root) throw new Error('无法创建 ZIP 目录。')
 
   root.folder('original')?.file(`${safeName}-original-${input.sourceImage.name}`, input.sourceImage.file)
-  const avatarABlob = await renderCroppedBlob(input.sourceImage, input.avatarA, { format: input.format, quality: input.quality })
-  const avatarBBlob = await renderCroppedBlob(input.sourceImage, input.avatarB, { format: input.format, quality: input.quality })
-  root.folder('avatars')?.file(`${safeName}-avatar-a.png`, avatarABlob)
-  root.folder('avatars')?.file(`${safeName}-avatar-b.png`, avatarBBlob)
+  const [avatarACircle, avatarASquare, avatarBCircle, avatarBSquare] = await Promise.all([
+    renderCroppedBlob(input.sourceImage, makeAvatarVariant(input.avatarA, 'circle'), { format: 'png', quality: input.quality }),
+    renderCroppedBlob(input.sourceImage, makeAvatarVariant(input.avatarA, 'square'), { format: 'png', quality: input.quality }),
+    renderCroppedBlob(input.sourceImage, makeAvatarVariant(input.avatarB, 'circle'), { format: 'png', quality: input.quality }),
+    renderCroppedBlob(input.sourceImage, makeAvatarVariant(input.avatarB, 'square'), { format: 'png', quality: input.quality }),
+  ])
+  root.folder('avatars')?.file(`${safeName}-avatar-a-circle.png`, avatarACircle)
+  root.folder('avatars')?.file(`${safeName}-avatar-a-square.png`, avatarASquare)
+  root.folder('avatars')?.file(`${safeName}-avatar-b-circle.png`, avatarBCircle)
+  root.folder('avatars')?.file(`${safeName}-avatar-b-square.png`, avatarBSquare)
   root.folder('preview')?.file(`${safeName}-preview.png`, await makeCouplePreview(input.sourceImage, input.avatarA, input.avatarB))
   const template = input.template ?? originalDoubleCircleDark
+  const templateWidth = input.templateOutput?.width ?? template.canvasWidth
+  const templateHeight = input.templateOutput?.height ?? template.canvasHeight
   root.folder('templates')?.file(
     `${safeName}-selected-template.png`,
-    await renderTemplateToBlob(template, { original: input.sourceImage, avatarA: input.avatarA, avatarB: input.avatarB }, { format: 'png', quality: 0.94, width: template.canvasWidth, height: template.canvasHeight }),
+    await renderTemplateToBlob(template, { original: input.sourceImage, avatarA: input.avatarA, avatarB: input.avatarB }, { format: 'png', quality: 0.94, width: templateWidth, height: templateHeight }),
   )
   root.file(
     'export-info.json',
@@ -36,7 +44,14 @@ export async function exportCoupleZip(input: CoupleZipInput) {
         outputFormat: input.format,
         avatarA: input.avatarA,
         avatarB: input.avatarB,
+        avatarFiles: [
+          `${safeName}-avatar-a-circle.png`,
+          `${safeName}-avatar-a-square.png`,
+          `${safeName}-avatar-b-circle.png`,
+          `${safeName}-avatar-b-square.png`,
+        ],
         templateId: template.id,
+        templateOutput: { width: templateWidth, height: templateHeight },
         createdAt: new Date().toISOString(),
       },
       null,
@@ -46,10 +61,20 @@ export async function exportCoupleZip(input: CoupleZipInput) {
   return zip.generateAsync({ type: 'blob' })
 }
 
+function makeAvatarVariant(config: CropConfig, shape: 'circle' | 'square'): CropConfig {
+  return {
+    ...config,
+    shape,
+    aspectRatio: 1,
+    outputWidth: 800,
+    outputHeight: 800,
+  }
+}
+
 async function makeCouplePreview(sourceImage: CoupleZipInput['sourceImage'], avatarA: CropConfig, avatarB: CropConfig) {
   const [canvasA, canvasB] = await Promise.all([
-    renderCroppedCanvas(sourceImage, { ...avatarA, outputWidth: 512, outputHeight: 512 }, { format: 'png' }),
-    renderCroppedCanvas(sourceImage, { ...avatarB, outputWidth: 512, outputHeight: 512 }, { format: 'png' }),
+    renderCroppedCanvas(sourceImage, makeAvatarVariant(avatarA, 'circle'), { format: 'png' }),
+    renderCroppedCanvas(sourceImage, makeAvatarVariant(avatarB, 'circle'), { format: 'png' }),
   ])
   const canvas = document.createElement('canvas')
   canvas.width = 1080
@@ -68,4 +93,3 @@ async function makeCouplePreview(sourceImage: CoupleZipInput['sourceImage'], ava
     canvas.toBlob((blob) => (blob ? resolve(blob) : reject(new Error('组合预览导出失败。'))), 'image/png')
   })
 }
-

@@ -26,6 +26,10 @@ export type TemplateImageElement = {
   borderRadius?: number
   borderWidth?: number
   borderColor?: string
+  shadowColor?: string
+  shadowBlur?: number
+  shadowOffsetX?: number
+  shadowOffsetY?: number
   objectFit: 'cover' | 'contain'
   rotation?: number
   locked?: boolean
@@ -74,6 +78,10 @@ export type TemplateShapeElement = {
   strokeWidth?: number
   borderRadius?: number
   opacity?: number
+  shadowColor?: string
+  shadowBlur?: number
+  shadowOffsetX?: number
+  shadowOffsetY?: number
   visible?: boolean
   zIndex: number
 }

@@ -15,6 +15,18 @@ export async function resolveTemplateSource(
   const cropConfig: CropConfig = element.source === 'avatarA' ? sources.avatarA : sources.avatarB
   const outputWidth = Math.max(128, Math.round(element.width * scale))
   const outputHeight = Math.max(128, Math.round(element.height * scale))
-  const canvas = await renderCroppedCanvas(sources.original, { ...cropConfig, outputWidth, outputHeight }, { format: 'png' })
+  const shouldRenderCircle = element.shape === 'circle'
+  const isSquareSlot = Math.abs(outputWidth - outputHeight) <= 2
+  const canvas = await renderCroppedCanvas(
+    sources.original,
+    {
+      ...cropConfig,
+      shape: shouldRenderCircle ? 'circle' : isSquareSlot ? 'square' : 'rectangle',
+      aspectRatio: shouldRenderCircle || isSquareSlot ? 1 : outputWidth / outputHeight,
+      outputWidth,
+      outputHeight,
+    },
+    { format: 'png' },
+  )
   return { image: canvas, ratio: outputWidth / outputHeight }
 }

@@ -5,6 +5,7 @@ import { Button } from '../../../components/ui/Button'
 import type { ToastState } from '../../../components/ui/Toast'
 import { useCoupleStore } from '../../couple-avatar/store/useCoupleStore'
 import { renderCroppedDataUrl } from '../../cropper/utils/cropImage'
+import type { CropConfig } from '../../cropper/types'
 import { TemplateGallery } from './TemplateGallery'
 import { TemplateCanvas } from './TemplateCanvas'
 import { TemplateInspector } from './TemplateInspector'
@@ -19,21 +20,28 @@ type TemplateEditorProps = {
 export function TemplateEditor({ onBack, setToast }: TemplateEditorProps) {
   const { sourceImage, avatarA, avatarB } = useCoupleStore()
   const workingTemplate = useCoupleTemplateStore((state) => state.workingTemplate)
-  const [avatarAUrl, setAvatarAUrl] = useState<string | null>(null)
-  const [avatarBUrl, setAvatarBUrl] = useState<string | null>(null)
+  const [avatarPreviewUrls, setAvatarPreviewUrls] = useState<{
+    avatarACircle: string
+    avatarASquare: string
+    avatarBCircle: string
+    avatarBSquare: string
+  } | null>(null)
   const canUseTemplate = Boolean(sourceImage && avatarA.croppedAreaPixels && avatarB.croppedAreaPixels)
 
   useEffect(() => {
     let cancelled = false
     if (!sourceImage || !avatarA.croppedAreaPixels || !avatarB.croppedAreaPixels) {
-      setAvatarAUrl(null)
-      setAvatarBUrl(null)
+      setAvatarPreviewUrls(null)
       return
     }
-    void Promise.all([renderCroppedDataUrl(sourceImage, avatarA), renderCroppedDataUrl(sourceImage, avatarB)]).then(([a, b]) => {
+    void Promise.all([
+      renderCroppedDataUrl(sourceImage, makeAvatarVariant(avatarA, 'circle')),
+      renderCroppedDataUrl(sourceImage, makeAvatarVariant(avatarA, 'square')),
+      renderCroppedDataUrl(sourceImage, makeAvatarVariant(avatarB, 'circle')),
+      renderCroppedDataUrl(sourceImage, makeAvatarVariant(avatarB, 'square')),
+    ]).then(([avatarACircle, avatarASquare, avatarBCircle, avatarBSquare]) => {
       if (!cancelled) {
-        setAvatarAUrl(a)
-        setAvatarBUrl(b)
+        setAvatarPreviewUrls({ avatarACircle, avatarASquare, avatarBCircle, avatarBSquare })
       }
     })
     return () => {
@@ -44,10 +52,12 @@ export function TemplateEditor({ onBack, setToast }: TemplateEditorProps) {
   const sourceUrls = useMemo(
     () => ({
       original: sourceImage?.previewUrl ?? null,
-      avatarA: avatarAUrl,
-      avatarB: avatarBUrl,
+      avatarACircle: avatarPreviewUrls?.avatarACircle ?? null,
+      avatarASquare: avatarPreviewUrls?.avatarASquare ?? null,
+      avatarBCircle: avatarPreviewUrls?.avatarBCircle ?? null,
+      avatarBSquare: avatarPreviewUrls?.avatarBSquare ?? null,
     }),
-    [sourceImage?.previewUrl, avatarAUrl, avatarBUrl],
+    [sourceImage?.previewUrl, avatarPreviewUrls],
   )
 
   if (!canUseTemplate) {
@@ -80,3 +90,12 @@ export function TemplateEditor({ onBack, setToast }: TemplateEditorProps) {
   )
 }
 
+function makeAvatarVariant(config: CropConfig, shape: 'circle' | 'square'): CropConfig {
+  return {
+    ...config,
+    shape,
+    aspectRatio: 1,
+    outputWidth: 800,
+    outputHeight: 800,
+  }
+}

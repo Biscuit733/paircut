@@ -52,7 +52,21 @@ export const useCoupleStore = create<CoupleStore>((set) => ({
       revokeImageAsset(state.singleImage)
       return { singleImage: asset, singleCrop: defaultCropConfig({ shape: 'square' }) }
     }),
-  setActiveAvatar: (activeAvatar) => set({ activeAvatar }),
+  setActiveAvatar: (activeAvatar) =>
+    set((state) => {
+      if (state.activeAvatar === activeAvatar) return { activeAvatar }
+      const sourceConfig = state.activeAvatar === 'a' ? state.avatarA : state.avatarB
+      const syncPatch = {
+        shape: sourceConfig.shape,
+        aspectRatio: sourceConfig.aspectRatio,
+        zoom: sourceConfig.zoom,
+        outputWidth: sourceConfig.outputWidth,
+        outputHeight: sourceConfig.outputHeight,
+      }
+      return activeAvatar === 'a'
+        ? { activeAvatar, avatarA: { ...state.avatarA, ...syncPatch } }
+        : { activeAvatar, avatarB: { ...state.avatarB, ...syncPatch } }
+    }),
   updateAvatar: (avatar, patch) =>
     set((state) =>
       avatar === 'a'
@@ -74,4 +88,3 @@ export const useCoupleStore = create<CoupleStore>((set) => ({
         : { avatarB: cropForSide('b'), activeAvatar: state.activeAvatar },
     ),
 }))
-
