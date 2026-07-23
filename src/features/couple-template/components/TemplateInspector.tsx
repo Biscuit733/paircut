@@ -4,6 +4,7 @@ import { Field } from '../../../components/ui/Field'
 import { useCoupleTemplateStore } from '../store/useCoupleTemplateStore'
 import type { TemplateImageAdjustment } from '../types'
 import { templateFontGroups, templateFontOptions } from '../fontOptions'
+import { formatInspectorNumber } from '../utils/inspectorNumbers'
 
 export function TemplateInspector() {
   const { workingTemplate, selectedElementId, updateElement, updateTemplate, resetTemplate } = useCoupleTemplateStore()
@@ -135,20 +136,27 @@ function normalizeColor(color: string | undefined) {
 function PositionFields({ id, x, y, width, height }: { id: string; x: number; y: number; width: number; height: number }) {
   const updateElement = useCoupleTemplateStore((state) => state.updateElement)
   return (
-    <div className="grid grid-cols-2 gap-3">
-      <Field label="X">
-        <input className="rounded-lg border border-[#e5e5e5] px-3 py-2" type="number" value={x} onChange={(event) => updateElement(id, { x: Number(event.target.value) })} />
-      </Field>
-      <Field label="Y">
-        <input className="rounded-lg border border-[#e5e5e5] px-3 py-2" type="number" value={y} onChange={(event) => updateElement(id, { y: Number(event.target.value) })} />
-      </Field>
-      <Field label="宽">
-        <input className="rounded-lg border border-[#e5e5e5] px-3 py-2" type="number" value={width} onChange={(event) => updateElement(id, { width: Number(event.target.value) })} />
-      </Field>
-      <Field label="高">
-        <input className="rounded-lg border border-[#e5e5e5] px-3 py-2" type="number" value={height} onChange={(event) => updateElement(id, { height: Number(event.target.value) })} />
-      </Field>
+    <div className="grid grid-cols-2 gap-2 rounded-xl bg-[#fbfaf7] p-3">
+      <CompactNumberField label="X" value={x} onChange={(value) => updateElement(id, { x: value })} />
+      <CompactNumberField label="Y" value={y} onChange={(value) => updateElement(id, { y: value })} />
+      <CompactNumberField label="宽" value={width} onChange={(value) => updateElement(id, { width: value })} />
+      <CompactNumberField label="高" value={height} onChange={(value) => updateElement(id, { height: value })} />
     </div>
+  )
+}
+
+function CompactNumberField({ label, value, onChange }: { label: string; value: number; onChange: (value: number) => void }) {
+  return (
+    <label className="grid min-w-0 gap-1.5 text-sm text-[#525252]">
+      <span className="text-xs font-medium text-[#737373]">{label}</span>
+      <input
+        className="h-9 min-w-0 w-full rounded-lg border border-[#dedede] bg-white px-2.5 text-sm text-[#171717] outline-none transition focus:border-[#171717] focus:ring-2 focus:ring-[#171717]/10"
+        inputMode="decimal"
+        type="number"
+        value={formatInspectorNumber(value)}
+        onChange={(event) => onChange(Number(event.target.value))}
+      />
+    </label>
   )
 }
 
