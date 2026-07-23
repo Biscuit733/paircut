@@ -108,7 +108,7 @@ export function CoupleCropper({ onOpenTemplates, setToast }: CoupleCropperProps)
   }
 
   return (
-    <div className="grid gap-4 lg:grid-cols-[300px_minmax(0,1fr)_300px]">
+    <div className="grid items-start gap-4 lg:grid-cols-[300px_minmax(0,1fr)_300px]">
       <Panel className="grid content-start gap-4">
         <ImageUploader
           description="上传一张情侣或双人原图，Biscuit 情头工坊会给 A/B 头像生成左右两侧的初始裁剪位置。"
@@ -133,7 +133,7 @@ export function CoupleCropper({ onOpenTemplates, setToast }: CoupleCropperProps)
         </div>
       </Panel>
 
-      <main className="grid gap-4">
+      <main className="grid content-start gap-4">
         <div className="flex flex-wrap items-center gap-2">
           {(['a', 'b'] as const).map((avatar) => (
             <Button key={avatar} variant={activeAvatar === avatar ? 'primary' : 'secondary'} onClick={() => setActiveAvatar(avatar)}>

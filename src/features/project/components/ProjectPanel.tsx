@@ -62,6 +62,7 @@ export function ProjectPanel({ setToast }: { setToast: (toast: ToastState) => vo
         <div className="min-w-0">
           <p className="text-sm font-semibold text-[#171717]">作品草稿</p>
           <p className="mt-1 truncate text-xs text-[#737373]">{selectedDraft ? `当前：${selectedDraft.info.title}` : '保存当前裁剪、模板和作品信息'}</p>
+          <p className="mt-1 text-xs leading-5 text-[#8a8a8a]">仅保存在当前浏览器，不会线上展示；原图需重新导入。</p>
         </div>
         {lastSavedAt ? <span className="shrink-0 rounded-full bg-[#f6f6f6] px-2 py-1 text-[11px] text-[#8a8a8a]">已保存</span> : null}
       </div>
