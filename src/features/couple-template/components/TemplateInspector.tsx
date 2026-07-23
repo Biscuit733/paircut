@@ -3,6 +3,7 @@ import { Button } from '../../../components/ui/Button'
 import { Field } from '../../../components/ui/Field'
 import { useCoupleTemplateStore } from '../store/useCoupleTemplateStore'
 import type { TemplateImageAdjustment } from '../types'
+import { templateFontGroups, templateFontOptions } from '../fontOptions'
 
 export function TemplateInspector() {
   const { workingTemplate, selectedElementId, updateElement, updateTemplate, resetTemplate } = useCoupleTemplateStore()
@@ -40,13 +41,17 @@ export function TemplateInspector() {
               </Field>
               <Field label="字体风格">
                 <select className="rounded-lg border border-[#e5e5e5] px-3 py-2" value={element.fontFamily} onChange={(event) => updateElement(element.id, { fontFamily: event.target.value })}>
-                  <option value={'"Great Vibes", "Parisienne", cursive'}>高级花体</option>
-                  <option value={'"Parisienne", "Great Vibes", cursive'}>轻盈签名</option>
-                  <option value={'"Dancing Script", "Trebuchet MS", cursive'}>自然手写</option>
-                  <option value={'YouYuan, "Microsoft YaHei", sans-serif'}>圆润中文</option>
-                  <option value={'"Arial Black", Impact, "Microsoft YaHei", sans-serif'}>酷黑标题</option>
-                  <option value={'serif'}>复古衬线</option>
-                  <option value={'sans-serif'}>简洁黑体</option>
+                  {templateFontGroups.map((group) => (
+                    <optgroup key={group} label={group}>
+                      {templateFontOptions
+                        .filter((option) => option.group === group)
+                        .map((option) => (
+                          <option key={option.value} value={option.value}>
+                            {option.label}
+                          </option>
+                        ))}
+                    </optgroup>
+                  ))}
                 </select>
               </Field>
               <Field label="文字颜色">
