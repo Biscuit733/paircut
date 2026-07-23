@@ -84,7 +84,7 @@ export function ProjectPanel({ setToast }: { setToast: (toast: ToastState) => vo
         </summary>
         <div className="grid gap-3 border-t border-[#eeeeee] p-3">
           <Field label="标题">
-            <input className={controlClass} placeholder="未命名情头" value={info.title} onChange={(event) => updateInfo({ title: event.target.value })} />
+            <input className={controlClass} placeholder="未命名头像" value={info.title} onChange={(event) => updateInfo({ title: event.target.value })} />
           </Field>
           <Field label="系列">
             <input className={controlClass} value={info.seriesName} onChange={(event) => updateInfo({ seriesName: event.target.value })} />

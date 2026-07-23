@@ -5,6 +5,8 @@ import { renderTemplateToBlob } from '../couple-template/utils/renderTemplate'
 import { originalDoubleCircleDark } from '../couple-template/templates/originalDoubleCircleDark'
 import type { CoupleZipInput } from './types'
 import { sanitizeFileName } from '../../utils/file'
+import { readWorkshopSettings } from '../workshop-settings/store/useWorkshopSettingsStore'
+import { applyTemplateDefaults } from '../couple-template/utils/applyTemplateDefaults'
 
 export async function exportCoupleZip(input: CoupleZipInput) {
   const safeName = sanitizeFileName(input.workName)
@@ -23,8 +25,9 @@ export async function exportCoupleZip(input: CoupleZipInput) {
   root.folder('avatars')?.file(`${safeName}-avatar-a-square.png`, avatarASquare)
   root.folder('avatars')?.file(`${safeName}-avatar-b-circle.png`, avatarBCircle)
   root.folder('avatars')?.file(`${safeName}-avatar-b-square.png`, avatarBSquare)
-  root.folder('preview')?.file(`${safeName}-preview.png`, await makeCouplePreview(input.sourceImage, input.avatarA, input.avatarB))
-  const template = input.template ?? originalDoubleCircleDark
+  const settings = readWorkshopSettings()
+  root.folder('preview')?.file(`${safeName}-preview.png`, await makeCouplePreview(input.sourceImage, input.avatarA, input.avatarB, settings.creatorName))
+  const template = input.template ?? applyTemplateDefaults(originalDoubleCircleDark, settings)
   const templateWidth = input.templateOutput?.width ?? template.canvasWidth
   const templateHeight = input.templateOutput?.height ?? template.canvasHeight
   root.folder('templates')?.file(
@@ -71,7 +74,7 @@ function makeAvatarVariant(config: CropConfig, shape: 'circle' | 'square'): Crop
   }
 }
 
-async function makeCouplePreview(sourceImage: CoupleZipInput['sourceImage'], avatarA: CropConfig, avatarB: CropConfig) {
+async function makeCouplePreview(sourceImage: CoupleZipInput['sourceImage'], avatarA: CropConfig, avatarB: CropConfig, creatorName: string) {
   const [canvasA, canvasB] = await Promise.all([
     renderCroppedCanvas(sourceImage, makeAvatarVariant(avatarA, 'circle'), { format: 'png' }),
     renderCroppedCanvas(sourceImage, makeAvatarVariant(avatarB, 'circle'), { format: 'png' }),
@@ -88,7 +91,7 @@ async function makeCouplePreview(sourceImage: CoupleZipInput['sourceImage'], ava
   context.fillStyle = '#171717'
   context.font = '500 34px sans-serif'
   context.textAlign = 'center'
-  context.fillText('Biscuit 情头工坊预览', 540, 560)
+  context.fillText(`${creatorName} 头像工坊预览`, 540, 560)
   return new Promise<Blob>((resolve, reject) => {
     canvas.toBlob((blob) => (blob ? resolve(blob) : reject(new Error('组合预览导出失败。'))), 'image/png')
   })

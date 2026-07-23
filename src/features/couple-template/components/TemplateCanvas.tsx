@@ -32,7 +32,7 @@ export function TemplateCanvas({ template, sourceUrls }: TemplateCanvasProps) {
   const elements = useMemo(() => sortedElements(template.elements), [template.elements])
 
   return (
-    <div className="grid place-items-center overflow-auto rounded-xl bg-[#202020] p-6">
+    <div className="grid place-items-center overflow-auto rounded-xl bg-[#202020] p-6 xl:h-full xl:min-h-0">
       <div
         ref={frameRef}
         className="relative origin-top-left shadow-2xl"

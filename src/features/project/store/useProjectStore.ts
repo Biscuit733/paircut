@@ -1,7 +1,9 @@
 import { create } from 'zustand'
 import { createProjectDraft, markProjectDraftDeleted, parseProjectDraftList, restoreProjectDraft, upsertProjectDraft } from '../projectDraft'
 import type { ProjectDraft, ProjectDraftInput, ProjectInfo } from '../types'
-import { emptyProjectInfo } from '../types'
+import { createDefaultProjectInfo } from '../types'
+import { readWorkshopSettings } from '../../workshop-settings/store/useWorkshopSettingsStore'
+import type { WorkshopSettings } from '../../workshop-settings/types'
 
 const storageKey = 'biscuit-avatar-workshop-project-drafts-v1'
 
@@ -16,6 +18,7 @@ type ProjectStore = {
   selectDraft: (id: string) => ProjectDraft | null
   deleteDraft: (id: string) => void
   restoreDraft: (id: string) => void
+  applyWorkshopSettings: (settings: WorkshopSettings, previousSettings: WorkshopSettings) => void
 }
 
 function readDrafts() {
@@ -33,16 +36,16 @@ function writeDrafts(drafts: ProjectDraft[]) {
 }
 
 function draftTitle(info: ProjectInfo) {
-  return info.title.trim() || [info.seriesName, info.issue].filter(Boolean).join(' ') || '未命名情头'
+  return info.title.trim() || [info.seriesName, info.issue].filter(Boolean).join(' ') || '未命名头像'
 }
 
 export const useProjectStore = create<ProjectStore>((set, get) => ({
-  info: emptyProjectInfo,
+  info: createDefaultProjectInfo(readWorkshopSettings()),
   drafts: readDrafts(),
   selectedDraftId: null,
   lastSavedAt: null,
   updateInfo: (patch) => set((state) => ({ info: { ...state.info, ...patch } })),
-  resetInfo: () => set({ info: emptyProjectInfo, selectedDraftId: null }),
+  resetInfo: () => set({ info: createDefaultProjectInfo(readWorkshopSettings()), selectedDraftId: null }),
   saveDraft: (input) => {
     const now = new Date().toISOString()
     const existing = get().drafts.find((draft) => draft.id === get().selectedDraftId)
@@ -78,4 +81,11 @@ export const useProjectStore = create<ProjectStore>((set, get) => ({
     writeDrafts(drafts)
     set({ drafts, selectedDraftId: id, info: draft?.info ?? get().info })
   },
+  applyWorkshopSettings: (settings, previousSettings) =>
+    set((state) => ({
+      info:
+        state.selectedDraftId || (state.info.seriesName.trim() && state.info.seriesName !== previousSettings.themeSeries)
+          ? state.info
+          : { ...state.info, seriesName: settings.themeSeries },
+    })),
 }))

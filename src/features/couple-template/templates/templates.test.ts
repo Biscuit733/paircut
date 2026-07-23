@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { couplePosterTemplates } from '.'
 import type { CoupleTemplateElement } from '../types'
+import { applyTemplateDefaults } from '../utils/applyTemplateDefaults'
 
 function elementHeight(element: CoupleTemplateElement) {
   return element.height ?? (element.type === 'text' ? element.fontSize * (element.lineHeight ?? 1.25) : 0)
@@ -30,5 +31,18 @@ describe('couple poster templates', () => {
     )
 
     expect(failures).toEqual([])
+  })
+
+  it('applies workshop creator and theme defaults to template text', () => {
+    const template = applyTemplateDefaults(couplePosterTemplates[0], {
+      creatorName: 'Momo',
+      themeSeries: '今天这两',
+    })
+    const text = template.elements.filter((element) => element.type === 'text').map((element) => element.text).join('\n')
+
+    expect(text).toContain('Momo')
+    expect(text).toContain('今天这两')
+    expect(text).not.toContain('Biscuit')
+    expect(text).not.toContain('一丁点甜')
   })
 })

@@ -14,6 +14,6 @@ export const xiaohongshuShare: CouplePosterTemplate = {
     { id: 'original-image', type: 'image', source: 'original', x: 88, y: 210, width: 904, height: 520, shape: 'rounded-rectangle', borderRadius: 32, shadowColor: 'rgba(0,0,0,0.12)', shadowBlur: 20, shadowOffsetY: 10, objectFit: 'cover', zIndex: 1 },
     { id: 'avatar-a', type: 'image', source: 'avatarA', x: 190, y: 790, width: 230, height: 230, shape: 'rounded-rectangle', borderRadius: 30, shadowColor: 'rgba(0,0,0,0.18)', shadowBlur: 18, shadowOffsetY: 10, objectFit: 'cover', zIndex: 2 },
     { id: 'avatar-b', type: 'image', source: 'avatarB', x: 660, y: 790, width: 230, height: 230, shape: 'rounded-rectangle', borderRadius: 30, shadowColor: 'rgba(0,0,0,0.18)', shadowBlur: 18, shadowOffsetY: 10, objectFit: 'cover', zIndex: 2 },
-    { id: 'note', type: 'text', text: 'Biscuit 情头工坊', x: 88, y: 1022, width: 900, fontSize: 28, fontFamily: '"Microsoft YaHei", sans-serif', fontWeight: 500, color: '#737373', textAlign: 'center', letterSpacing: 1, editable: true, zIndex: 3 },
+    { id: 'note', type: 'text', text: 'Biscuit 头像工坊', x: 88, y: 1022, width: 900, fontSize: 28, fontFamily: '"Microsoft YaHei", sans-serif', fontWeight: 500, color: '#737373', textAlign: 'center', letterSpacing: 1, editable: true, zIndex: 3 },
   ],
 }

@@ -7,20 +7,24 @@ import { SingleCropper } from '../features/cropper/components/SingleCropper'
 import { TemplateEditor } from '../features/couple-template/components/TemplateEditor'
 import { CollageEditor } from '../features/collage/components/CollageEditor'
 import { useCoupleTemplateStore } from '../features/couple-template/store/useCoupleTemplateStore'
+import { WorkshopSettingsPanel } from '../features/workshop-settings/components/WorkshopSettingsPanel'
+import { useWorkshopSettingsStore } from '../features/workshop-settings/store/useWorkshopSettingsStore'
 
 type AppMode = 'couple' | 'single' | 'template' | 'collage'
 
 const modes: Array<{ id: AppMode; label: string; icon: React.ReactNode }> = [
-  { id: 'couple', label: '情头裁剪', icon: <Scissors size={17} /> },
+  { id: 'couple', label: '头像裁剪', icon: <Scissors size={17} /> },
   { id: 'single', label: '单图裁剪', icon: <Crop size={17} /> },
-  { id: 'template', label: '情头模板', icon: <LayoutTemplate size={17} /> },
+  { id: 'template', label: '头像模板', icon: <LayoutTemplate size={17} /> },
   { id: 'collage', label: '智能拼图', icon: <Grid2X2 size={17} /> },
 ]
 
 export function App() {
   const [mode, setMode] = useState<AppMode>('couple')
   const [toast, setToast] = useState<ToastState>(null)
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false)
   const { undo, redo } = useCoupleTemplateStore()
+  const settings = useWorkshopSettingsStore((state) => state.settings)
 
   useEffect(() => {
     if (!toast) return
@@ -55,8 +59,8 @@ export function App() {
               <Images size={22} />
             </div>
             <div>
-              <h1 className="text-xl font-semibold tracking-normal text-[#171717]">Biscuit 情头工坊</h1>
-              <p className="text-xs text-[#737373]">本地制作情头、展示模板与甜感拼图</p>
+              <h1 className="text-xl font-semibold tracking-normal text-[#171717]">{settings.creatorName} 头像工坊</h1>
+              <p className="text-xs text-[#737373]">本地制作头像、展示模板与甜感拼图</p>
             </div>
           </div>
           <nav className="flex flex-wrap gap-2">
@@ -65,7 +69,7 @@ export function App() {
                 {item.label}
               </Button>
             ))}
-            <Button icon={<Settings2 size={17} />} variant="ghost" onClick={() => setToast({ type: 'info', message: '设置项会随近期导出偏好自动保存，完整设置页留给下一版。' })}>
+            <Button icon={<Settings2 size={17} />} variant="ghost" onClick={() => setIsSettingsOpen(true)}>
               设置
             </Button>
           </nav>
@@ -78,6 +82,7 @@ export function App() {
         {mode === 'template' ? <TemplateEditor setToast={setToast} onBack={() => setMode('couple')} /> : null}
         {mode === 'collage' ? <CollageEditor setToast={setToast} /> : null}
       </div>
+      {isSettingsOpen ? <WorkshopSettingsPanel setToast={setToast} onClose={() => setIsSettingsOpen(false)} /> : null}
       <Toast toast={toast} />
     </div>
   )

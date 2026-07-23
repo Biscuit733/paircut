@@ -12,7 +12,7 @@ export const darkProfileShowcase: CouplePosterTemplate = {
     { id: 'top-bar', type: 'shape', shape: 'rectangle', x: 0, y: 0, width: 1080, height: 110, fill: '#ffffff', zIndex: 1 },
     { id: 'profile-dot', type: 'image', source: 'avatarB', x: 124, y: 32, width: 58, height: 58, shape: 'circle', borderWidth: 2, borderColor: '#ffffff', shadowColor: 'rgba(0,0,0,0.18)', shadowBlur: 12, shadowOffsetY: 4, objectFit: 'cover', zIndex: 3 },
     { id: 'account-name', type: 'text', text: 'Biscuit', x: 205, y: 38, width: 440, fontSize: 38, fontFamily: '"Comic Sans MS", "Trebuchet MS", sans-serif', fontWeight: 600, color: '#171717', textAlign: 'left', editable: true, zIndex: 3 },
-    { id: 'top-note', type: 'text', text: '情头工坊', x: 770, y: 42, width: 180, fontSize: 25, fontFamily: 'YouYuan, "Microsoft YaHei", sans-serif', fontWeight: 700, color: '#8a8a8a', textAlign: 'right', editable: true, zIndex: 3 },
+    { id: 'top-note', type: 'text', text: '头像工坊', x: 770, y: 42, width: 180, fontSize: 25, fontFamily: 'YouYuan, "Microsoft YaHei", sans-serif', fontWeight: 700, color: '#8a8a8a', textAlign: 'right', editable: true, zIndex: 3 },
     { id: 'hero', type: 'image', source: 'original', x: 0, y: 110, width: 1080, height: 560, shape: 'rectangle', objectFit: 'cover', locked: true, zIndex: 1 },
     { id: 'hero-watermark', type: 'text', text: 'Biscuit', x: 260, y: 360, width: 560, fontSize: 64, fontFamily: '"Comic Sans MS", "Trebuchet MS", sans-serif', fontWeight: 700, color: 'rgba(255,255,255,0.40)', textAlign: 'center', letterSpacing: 2, editable: true, zIndex: 2 },
     { id: 'dark-panel', type: 'shape', shape: 'rectangle', x: 0, y: 670, width: 1080, height: 300, fill: '#11171d', zIndex: 2 },

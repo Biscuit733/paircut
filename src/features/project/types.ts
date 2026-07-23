@@ -1,4 +1,5 @@
 import type { CropConfig } from '../cropper/types'
+import { defaultWorkshopSettings, type WorkshopSettings } from '../workshop-settings/types'
 
 export type ProjectStatus = 'draft' | 'needs-crop' | 'needs-template' | 'needs-publish' | 'complete'
 
@@ -61,4 +62,11 @@ export const emptyProjectInfo: ProjectInfo = {
   tags: [],
   notes: '',
   status: 'draft',
+}
+
+export function createDefaultProjectInfo(settings: WorkshopSettings = defaultWorkshopSettings): ProjectInfo {
+  return {
+    ...emptyProjectInfo,
+    seriesName: settings.themeSeries,
+  }
 }

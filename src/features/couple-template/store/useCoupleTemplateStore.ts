@@ -2,6 +2,9 @@ import { create } from 'zustand'
 import type { CouplePosterTemplate, CoupleTemplateElement } from '../types'
 import { couplePosterTemplates } from '../templates'
 import { cloneTemplate } from '../utils/scaleTemplate'
+import { applyTemplateDefaults } from '../utils/applyTemplateDefaults'
+import { readWorkshopSettings } from '../../workshop-settings/store/useWorkshopSettingsStore'
+import type { WorkshopSettings } from '../../workshop-settings/types'
 
 type CoupleTemplateStore = {
   selectedTemplateId: string
@@ -23,9 +26,10 @@ type CoupleTemplateStore = {
   setExportSize: (size: string) => void
   setCustomWidth: (width: number) => void
   restoreProjectTemplate: (templateId: string, exportSize: string, customWidth: number) => void
+  applyWorkshopSettings: (settings: WorkshopSettings, previousSettings: WorkshopSettings) => void
 }
 
-const initialTemplate = cloneTemplate(couplePosterTemplates[0])
+const initialTemplate = applyTemplateDefaults(couplePosterTemplates[0], readWorkshopSettings())
 
 export const useCoupleTemplateStore = create<CoupleTemplateStore>((set, get) => ({
   selectedTemplateId: initialTemplate.id,
@@ -38,12 +42,12 @@ export const useCoupleTemplateStore = create<CoupleTemplateStore>((set, get) => 
   redoStack: [],
   setTemplate: (templateId) => {
     const template = couplePosterTemplates.find((item) => item.id === templateId) ?? couplePosterTemplates[0]
-    set({ selectedTemplateId: template.id, workingTemplate: cloneTemplate(template), selectedElementId: null, undoStack: [], redoStack: [] })
+    set({ selectedTemplateId: template.id, workingTemplate: applyTemplateDefaults(template, readWorkshopSettings()), selectedElementId: null, undoStack: [], redoStack: [] })
   },
   resetTemplate: () => {
     const template = couplePosterTemplates.find((item) => item.id === get().selectedTemplateId) ?? couplePosterTemplates[0]
     set((state) => ({
-      workingTemplate: cloneTemplate(template),
+      workingTemplate: applyTemplateDefaults(template, readWorkshopSettings()),
       selectedElementId: null,
       undoStack: [...state.undoStack.slice(-29), cloneTemplate(state.workingTemplate)],
       redoStack: [],
@@ -88,6 +92,12 @@ export const useCoupleTemplateStore = create<CoupleTemplateStore>((set, get) => 
   setCustomWidth: (customWidth) => set({ customWidth }),
   restoreProjectTemplate: (templateId, exportSize, customWidth) => {
     const template = couplePosterTemplates.find((item) => item.id === templateId) ?? couplePosterTemplates[0]
-    set({ selectedTemplateId: template.id, workingTemplate: cloneTemplate(template), selectedElementId: null, exportSize, customWidth, undoStack: [], redoStack: [] })
+    set({ selectedTemplateId: template.id, workingTemplate: applyTemplateDefaults(template, readWorkshopSettings()), selectedElementId: null, exportSize, customWidth, undoStack: [], redoStack: [] })
   },
+  applyWorkshopSettings: (settings, previousSettings) =>
+    set((state) => ({
+      workingTemplate: applyTemplateDefaults(state.workingTemplate, settings, previousSettings),
+      undoStack: [...state.undoStack.slice(-29), cloneTemplate(state.workingTemplate)],
+      redoStack: [],
+    })),
 }))

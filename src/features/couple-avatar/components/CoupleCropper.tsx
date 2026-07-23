@@ -14,6 +14,7 @@ import { exportCoupleZip } from '../../export/exportZip'
 import type { ToastState } from '../../../components/ui/Toast'
 import { ProjectPanel } from '../../project/components/ProjectPanel'
 import { useProjectStore } from '../../project/store/useProjectStore'
+import { useWorkshopSettingsStore } from '../../workshop-settings/store/useWorkshopSettingsStore'
 
 type CoupleCropperProps = {
   onOpenTemplates: () => void
@@ -36,6 +37,7 @@ export function CoupleCropper({ onOpenTemplates, setToast }: CoupleCropperProps)
     restoreAvatarState,
   } = useCoupleStore()
   const selectedDraft = useProjectStore((state) => state.drafts.find((draft) => draft.id === state.selectedDraftId) ?? null)
+  const creatorName = useWorkshopSettingsStore((state) => state.settings.creatorName)
   const [guide, setGuide] = useState<'grid' | 'cross' | 'safe' | 'none'>('grid')
   const [format, setFormat] = useState<ExportFormat>('png')
   const [quality, setQuality] = useState(0.92)
@@ -99,7 +101,7 @@ export function CoupleCropper({ onOpenTemplates, setToast }: CoupleCropperProps)
         quality,
       })
       downloadBlob(blob, `${sanitizeFileName(workName)}-biscuit.zip`)
-      setToast({ type: 'success', message: '整套情头 ZIP 已生成：原图、模板图、圆形/方形 A/B 头像都在里面。' })
+      setToast({ type: 'success', message: '整套头像 ZIP 已生成：原图、模板图、圆形/方形 A/B 头像都在里面。' })
     } catch (caught) {
       setToast({ type: 'error', message: caught instanceof Error ? caught.message : 'ZIP 导出失败。' })
     } finally {
@@ -108,11 +110,11 @@ export function CoupleCropper({ onOpenTemplates, setToast }: CoupleCropperProps)
   }
 
   return (
-    <div className="grid items-start gap-4 lg:grid-cols-[300px_minmax(0,1fr)_300px]">
-      <Panel className="grid content-start gap-4">
+    <div className="grid items-start gap-4 lg:h-[calc(100vh-116px)] lg:grid-cols-[300px_minmax(0,1fr)_300px] lg:overflow-hidden">
+      <Panel className="grid content-start gap-4 lg:h-full lg:min-h-0 lg:overflow-auto">
         <ImageUploader
-          description="上传一张情侣或双人原图，Biscuit 情头工坊会给 A/B 头像生成左右两侧的初始裁剪位置。"
-          label="上传情侣原图"
+          description={`上传一张双人或多人原图，${creatorName} 头像工坊会给 A/B 头像生成左右两侧的初始裁剪位置。`}
+          label="上传原图"
           onImages={(assets) => {
             setSourceImage(assets[0])
             if (selectedDraft) restoreAvatarState(selectedDraft.avatarA, selectedDraft.avatarB)
@@ -133,7 +135,7 @@ export function CoupleCropper({ onOpenTemplates, setToast }: CoupleCropperProps)
         </div>
       </Panel>
 
-      <main className="grid content-start gap-4">
+      <main className="grid content-start gap-4 lg:h-full lg:min-h-0 lg:overflow-auto">
         <div className="flex flex-wrap items-center gap-2">
           {(['a', 'b'] as const).map((avatar) => (
             <Button key={avatar} variant={activeAvatar === avatar ? 'primary' : 'secondary'} onClick={() => setActiveAvatar(avatar)}>
@@ -142,7 +144,7 @@ export function CoupleCropper({ onOpenTemplates, setToast }: CoupleCropperProps)
           ))}
           <Button variant="ghost">双头像预览</Button>
           <Button icon={<GalleryHorizontalEnd size={16} />} variant="primary" onClick={onOpenTemplates}>
-            套用情头模板
+            套用头像模板
           </Button>
         </div>
         {sourceImage ? (
@@ -163,7 +165,7 @@ export function CoupleCropper({ onOpenTemplates, setToast }: CoupleCropperProps)
         )}
       </main>
 
-      <Panel className="grid content-start gap-4">
+      <Panel className="grid content-start gap-4 lg:h-full lg:min-h-0 lg:overflow-auto">
         <div className="grid grid-cols-2 gap-3">
           <CropPreview asset={sourceImage} config={avatarA} label="头像 A" />
           <CropPreview asset={sourceImage} config={avatarB} label="头像 B" />
@@ -203,7 +205,7 @@ export function CoupleCropper({ onOpenTemplates, setToast }: CoupleCropperProps)
             导出另一个头像
           </Button>
           <Button disabled={!sourceImage || isExporting} onClick={() => void exportZip()}>
-            一键导出整套情头
+            一键导出整套头像
           </Button>
         </div>
       </Panel>

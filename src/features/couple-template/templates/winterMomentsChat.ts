@@ -12,7 +12,7 @@ export const winterMomentsChat: CouplePosterTemplate = {
     { id: 'top-bar', type: 'shape', shape: 'rectangle', x: 0, y: 0, width: 1080, height: 112, fill: '#ffffff', zIndex: 1 },
     { id: 'top-avatar', type: 'image', source: 'avatarA', x: 126, y: 30, width: 58, height: 58, shape: 'circle', borderWidth: 2, borderColor: '#ffffff', shadowColor: 'rgba(0,0,0,0.16)', shadowBlur: 12, shadowOffsetY: 5, objectFit: 'cover', zIndex: 3 },
     { id: 'account', type: 'text', text: 'Biscuit', x: 208, y: 35, width: 360, fontSize: 38, fontFamily: '"Comic Sans MS", "Trebuchet MS", sans-serif', fontWeight: 700, color: '#171717', textAlign: 'left', editable: true, zIndex: 3 },
-    { id: 'top-note', type: 'text', text: '情头工坊', x: 770, y: 42, width: 180, fontSize: 25, fontFamily: 'YouYuan, "Microsoft YaHei", sans-serif', fontWeight: 700, color: '#8a8a8a', textAlign: 'right', editable: true, zIndex: 3 },
+    { id: 'top-note', type: 'text', text: '头像工坊', x: 770, y: 42, width: 180, fontSize: 25, fontFamily: 'YouYuan, "Microsoft YaHei", sans-serif', fontWeight: 700, color: '#8a8a8a', textAlign: 'right', editable: true, zIndex: 3 },
     { id: 'green-band', type: 'shape', shape: 'rectangle', x: 0, y: 112, width: 1080, height: 330, fill: '#0b6b42', zIndex: 1 },
     { id: 'white-band', type: 'shape', shape: 'rectangle', x: 0, y: 442, width: 1080, height: 410, fill: '#ffffff', zIndex: 1 },
     { id: 'circle-a', type: 'image', source: 'avatarA', x: 110, y: 250, width: 380, height: 380, shape: 'circle', borderWidth: 10, borderColor: '#ffffff', shadowColor: 'rgba(0,0,0,0.16)', shadowBlur: 22, shadowOffsetY: 12, objectFit: 'cover', zIndex: 3 },

@@ -12,7 +12,7 @@ export const xhsCutePost: CouplePosterTemplate = {
     { id: 'top-bar', type: 'shape', shape: 'rectangle', x: 0, y: 0, width: 1080, height: 110, fill: '#ffffff', zIndex: 1 },
     { id: 'profile-dot', type: 'image', source: 'avatarA', x: 126, y: 32, width: 54, height: 54, shape: 'circle', borderWidth: 2, borderColor: '#ffffff', shadowColor: 'rgba(0,0,0,0.16)', shadowBlur: 12, shadowOffsetY: 4, objectFit: 'cover', zIndex: 3 },
     { id: 'account-name', type: 'text', text: 'Biscuit', x: 205, y: 35, width: 430, fontSize: 36, fontFamily: '"Comic Sans MS", "Trebuchet MS", sans-serif', fontWeight: 600, color: '#171717', textAlign: 'left', editable: true, zIndex: 3 },
-    { id: 'top-note', type: 'text', text: 'Biscuit 情头工坊', x: 690, y: 41, width: 258, fontSize: 24, fontFamily: 'YouYuan, "Microsoft YaHei", sans-serif', fontWeight: 700, color: '#8a8a8a', textAlign: 'right', editable: true, zIndex: 3 },
+    { id: 'top-note', type: 'text', text: 'Biscuit 头像工坊', x: 690, y: 41, width: 258, fontSize: 24, fontFamily: 'YouYuan, "Microsoft YaHei", sans-serif', fontWeight: 700, color: '#8a8a8a', textAlign: 'right', editable: true, zIndex: 3 },
     { id: 'original-image', type: 'image', source: 'original', x: 0, y: 110, width: 1080, height: 560, shape: 'rectangle', objectFit: 'cover', locked: true, zIndex: 1 },
     { id: 'watermark', type: 'text', text: 'Biscuit', x: 315, y: 320, width: 460, fontSize: 54, fontFamily: '"Comic Sans MS", "Trebuchet MS", sans-serif', fontWeight: 700, color: 'rgba(255,255,255,0.56)', textAlign: 'center', letterSpacing: 2, editable: true, zIndex: 2 },
     { id: 'white-panel', type: 'shape', shape: 'rectangle', x: 0, y: 670, width: 1080, height: 410, fill: '#ffffff', zIndex: 1 },
