@@ -1,4 +1,4 @@
-import { Download, FlipHorizontal, FlipVertical, LayoutGrid, Trash2 } from 'lucide-react'
+import { ArrowDown, ArrowUp, ChevronsDown, ChevronsUp, Download, FlipHorizontal, FlipVertical, GripVertical, LayoutGrid, Trash2 } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { Button } from '../../../components/ui/Button'
 import { Field } from '../../../components/ui/Field'
@@ -27,8 +27,11 @@ export function CollageEditor({ setToast }: { setToast: (toast: ToastState) => v
     clearImages,
     reverseImages,
     sortByName,
+    moveImage,
+    moveSelectedSlot,
     setTemplate,
     updateImageState,
+    selectSlot,
     setCanvasSize,
     applyAssignments,
   } = useCollageStore()
@@ -39,6 +42,7 @@ export function CollageEditor({ setToast }: { setToast: (toast: ToastState) => v
   const availableTemplates = filterTemplatesByImageCount(collageTemplates, images.length)
   const output = resolveOutputSize(canvasSize, 1080, 1440, 3 / 4)
   const selectedState = imageStates.find((state) => state.slotId === selectedSlotId) ?? null
+  const selectedImage = images.find((image) => image.id === selectedState?.imageId) ?? null
 
   const smartLayout = () => {
     if (images.length < 2) return
@@ -62,8 +66,8 @@ export function CollageEditor({ setToast }: { setToast: (toast: ToastState) => v
   }
 
   return (
-    <div className="grid gap-4 lg:grid-cols-[300px_minmax(0,1fr)_300px]">
-      <Panel className="grid content-start gap-4">
+    <div className="grid gap-4 lg:h-[calc(100vh-116px)] lg:grid-cols-[300px_minmax(0,1fr)_300px] lg:overflow-hidden">
+      <Panel className="grid content-start gap-4 lg:h-full lg:min-h-0 lg:overflow-auto">
         <ImageUploader multiple description="一次上传 2 到 20 张图片，支持继续添加、排序和删除。" label="上传拼图图片" onImages={addImages} />
         <div className="flex flex-wrap gap-2">
           <Button disabled={images.length < 2} onClick={reverseImages}>
@@ -77,31 +81,75 @@ export function CollageEditor({ setToast }: { setToast: (toast: ToastState) => v
           </Button>
         </div>
         <div className="grid gap-2">
-          {images.map((image) => (
-            <div key={image.id} className="flex items-center gap-2 rounded-lg border border-[#eeeeee] bg-white p-2">
-              <img alt={image.name} className="h-12 w-12 rounded-md object-cover" src={image.previewUrl} />
-              <span className="min-w-0 flex-1 truncate text-xs">{image.name}</span>
-              <Button aria-label="删除图片" icon={<Trash2 size={15} />} variant="ghost" onClick={() => window.confirm('确定删除这张图片？') && removeImage(image.id)} />
+          {images.map((image, index) => {
+            const state = imageStates.find((item) => item.imageId === image.id)
+            const isSelected = state?.slotId === selectedSlotId
+            return (
+            <div
+              key={image.id}
+              className={`grid cursor-grab gap-2 rounded-lg border p-2 transition active:cursor-grabbing ${
+                isSelected ? 'border-[#ff5f6d] bg-white shadow-[0_10px_24px_rgba(255,95,109,0.12)] ring-1 ring-[#ff5f6d]/25' : 'border-white/80 bg-white/72 hover:bg-white'
+              }`}
+              draggable
+              onClick={() => state && selectSlot(state.slotId)}
+              onDragOver={(event) => event.preventDefault()}
+              onDragStart={(event) => {
+                event.dataTransfer.setData('text/plain', `image:${image.id}`)
+                event.dataTransfer.effectAllowed = 'move'
+              }}
+              onDrop={(event) => {
+                event.preventDefault()
+                const payload = event.dataTransfer.getData('text/plain')
+                const sourceImageId = payload.startsWith('slot:')
+                  ? imageStates.find((item) => item.slotId === payload.replace('slot:', ''))?.imageId
+                  : payload.replace('image:', '')
+                if (sourceImageId) moveImage(sourceImageId, index)
+              }}
+            >
+              <div className="flex min-w-0 items-center gap-2">
+                <GripVertical className="shrink-0 text-[#a0a0a5]" size={16} />
+                <span className="grid h-6 w-6 shrink-0 place-items-center rounded-md bg-[#f1f0ec] text-xs font-semibold text-[#7a7a80]">{index + 1}</span>
+                <img alt={image.name} className="h-12 w-12 shrink-0 rounded-md object-cover" src={image.previewUrl} />
+                <span className="min-w-0 flex-1 truncate text-xs">{image.name}</span>
+                <Button aria-label="删除图片" className="shrink-0" icon={<Trash2 size={15} />} variant="ghost" onClick={(event) => { event.stopPropagation(); if (window.confirm('确定删除这张图片？')) removeImage(image.id) }} />
+              </div>
+              <div className="grid grid-cols-4 gap-1">
+                <Button aria-label="置顶" disabled={index === 0} icon={<ChevronsUp size={14} />} variant="ghost" onClick={(event) => { event.stopPropagation(); moveImage(image.id, 0) }} />
+                <Button aria-label="上移" disabled={index === 0} icon={<ArrowUp size={14} />} variant="ghost" onClick={(event) => { event.stopPropagation(); moveImage(image.id, index - 1) }} />
+                <Button aria-label="下移" disabled={index === images.length - 1} icon={<ArrowDown size={14} />} variant="ghost" onClick={(event) => { event.stopPropagation(); moveImage(image.id, index + 1) }} />
+                <Button aria-label="置底" disabled={index === images.length - 1} icon={<ChevronsDown size={14} />} variant="ghost" onClick={(event) => { event.stopPropagation(); moveImage(image.id, images.length - 1) }} />
+              </div>
             </div>
-          ))}
+            )
+          })}
         </div>
       </Panel>
 
-      <main className="grid content-start gap-4">
-        <div className="flex flex-wrap gap-2 rounded-xl border border-[#e5e5e5] bg-white p-3">
+      <main className="grid content-start gap-4 lg:h-full lg:min-h-0 lg:overflow-auto">
+        <div className="grid gap-3 rounded-lg border border-white/78 bg-white/72 p-3 shadow-[0_16px_44px_rgba(24,24,27,0.07),inset_0_1px_0_rgba(255,255,255,0.9)] backdrop-blur-xl">
+          <div className="flex flex-wrap gap-2">
           <Button disabled={images.length < 2} icon={<LayoutGrid size={16} />} variant="primary" onClick={smartLayout}>
             智能布局
           </Button>
+          <Button disabled={!selectedSlotId} icon={<ArrowUp size={16} />} onClick={() => moveSelectedSlot(-1)}>
+            前移一格
+          </Button>
+          <Button disabled={!selectedSlotId} icon={<ArrowDown size={16} />} onClick={() => moveSelectedSlot(1)}>
+            后移一格
+          </Button>
+          </div>
+          <div className="flex max-h-28 flex-wrap gap-2 overflow-auto pr-1">
           {availableTemplates.map((item) => (
             <Button key={item.id} variant={templateId === item.id ? 'primary' : 'secondary'} onClick={() => setTemplate(item.id)}>
               {item.name}
             </Button>
           ))}
+          </div>
         </div>
-        {images.length >= 2 ? <CollageCanvas imageStates={imageStates} /> : <Panel className="grid min-h-[520px] place-items-center text-center text-[#737373]">至少上传 2 张图片后开始拼图。</Panel>}
+        {images.length >= 2 ? <CollageCanvas imageStates={imageStates} output={output} /> : <Panel className="grid min-h-[520px] place-items-center text-center text-[#737373]">至少上传 2 张图片后开始拼图。</Panel>}
       </main>
 
-      <Panel className="grid content-start gap-4">
+      <Panel className="grid content-start gap-4 lg:h-full lg:min-h-0 lg:overflow-auto">
         <Field label="画布尺寸">
           <select className="rounded-lg border border-[#e5e5e5] px-3 py-2" value={canvasSize} onChange={(event) => setCanvasSize(event.target.value)}>
             <option value="1080x1080">1080 x 1080</option>
@@ -113,7 +161,22 @@ export function CollageEditor({ setToast }: { setToast: (toast: ToastState) => v
           </select>
         </Field>
         <StyleControls />
-        {selectedState ? <SlotControls state={selectedState} onChange={(patch) => updateImageState(selectedState.slotId, patch)} /> : <p className="rounded-xl bg-[#fbfaf7] p-3 text-sm text-[#737373]">点击拼图中的图片后，可独立调整位置、缩放、旋转和翻转。</p>}
+        {selectedState ? (
+          <>
+            <div className="grid gap-2 rounded-lg border border-white/72 bg-white/52 p-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.72)]">
+              <p className="truncate text-sm font-semibold text-[#171717]">{selectedImage?.name ?? '已选图片'}</p>
+              <div className="grid grid-cols-2 gap-2">
+                <Button icon={<ArrowUp size={16} />} onClick={() => moveSelectedSlot(-1)}>
+                  前移一格
+                </Button>
+                <Button icon={<ArrowDown size={16} />} onClick={() => moveSelectedSlot(1)}>
+                  后移一格
+                </Button>
+              </div>
+            </div>
+            <SlotControls state={selectedState} onChange={(patch) => updateImageState(selectedState.slotId, patch)} />
+          </>
+        ) : <p className="rounded-lg border border-white/70 bg-white/52 p-3 text-sm text-[#737373]">点击拼图中的图片后，可独立调整位置、缩放、旋转和翻转，也可以拖拽图片到别的位置交换。</p>}
         <Field label="导出格式">
           <select className="rounded-lg border border-[#e5e5e5] px-3 py-2" value={format} onChange={(event) => setFormat(event.target.value as ExportFormat)}>
             <option value="png">PNG</option>
@@ -132,15 +195,15 @@ export function CollageEditor({ setToast }: { setToast: (toast: ToastState) => v
   )
 }
 
-function CollageCanvas({ imageStates }: { imageStates: CollageImageState[] }) {
-  const { images, templateId, style, selectedSlotId, selectSlot } = useCollageStore()
+function CollageCanvas({ imageStates, output }: { imageStates: CollageImageState[]; output: { width: number; height: number } }) {
+  const { images, templateId, style, selectedSlotId, selectSlot, swapSlots, assignImageToSlot } = useCollageStore()
   const template = collageTemplates.find((item) => item.id === templateId) ?? collageTemplates[0]
   const slotMap = useMemo(() => new Map(imageStates.map((state) => [state.slotId, state])), [imageStates])
   return (
-    <div className="grid place-items-center overflow-auto rounded-xl bg-[#202020] p-6">
+    <div className="grid place-items-center overflow-auto rounded-lg bg-[#1d1d1f] p-6 shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]">
       <div
-        className="relative aspect-[3/4] h-[min(72vh,760px)] max-h-[760px] max-w-full overflow-hidden"
-        style={{ backgroundColor: style.backgroundColor, padding: style.padding / 3 }}
+        className="relative h-[min(72vh,760px)] max-h-[760px] max-w-full overflow-hidden"
+        style={{ aspectRatio: `${output.width} / ${output.height}`, backgroundColor: style.backgroundColor, padding: style.padding / 3 }}
       >
         {template.slots.slice(0, images.length).map((slot) => {
           const state = slotMap.get(slot.id)
@@ -150,7 +213,8 @@ function CollageCanvas({ imageStates }: { imageStates: CollageImageState[] }) {
           return (
             <button
               key={slot.id}
-              className={`absolute overflow-hidden border bg-[#eee] ${selectedSlotId === slot.id ? 'outline outline-2 outline-[#ff6b6b] outline-offset-2' : ''}`}
+              className={`absolute overflow-hidden border bg-[#eee] transition ${selectedSlotId === slot.id ? 'outline outline-2 outline-[#ff5f6d] outline-offset-2' : ''}`}
+              draggable
               style={{
                 left: `${slot.x * 100}%`,
                 top: `${slot.y * 100}%`,
@@ -164,6 +228,17 @@ function CollageCanvas({ imageStates }: { imageStates: CollageImageState[] }) {
               }}
               type="button"
               onClick={() => selectSlot(slot.id)}
+              onDragOver={(event) => event.preventDefault()}
+              onDragStart={(event) => {
+                event.dataTransfer.setData('text/plain', `slot:${slot.id}`)
+                event.dataTransfer.effectAllowed = 'move'
+              }}
+              onDrop={(event) => {
+                event.preventDefault()
+                const payload = event.dataTransfer.getData('text/plain')
+                if (payload.startsWith('slot:')) swapSlots(payload.replace('slot:', ''), slot.id)
+                if (payload.startsWith('image:')) assignImageToSlot(payload.replace('image:', ''), slot.id)
+              }}
             >
               <img
                 alt={image.name}
