@@ -32,7 +32,7 @@ export function TemplateCanvas({ template, sourceUrls }: TemplateCanvasProps) {
   const elements = useMemo(() => sortedElements(template.elements), [template.elements])
 
   return (
-    <div className="grid place-items-center overflow-auto rounded-xl bg-[#202020] p-6 xl:h-full xl:min-h-0">
+    <div className="grid place-items-center overflow-auto rounded-lg bg-[#1d1d1f] p-6 shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] xl:h-full xl:min-h-0">
       <div
         ref={frameRef}
         className="relative origin-top-left shadow-2xl"
@@ -101,7 +101,7 @@ function getElementHeight(element: CoupleTemplateElement) {
 }
 
 function baseClass(isSelected: boolean) {
-  return `absolute select-none ${isSelected ? 'outline outline-2 outline-[#ff6b6b] outline-offset-2' : 'outline outline-1 outline-transparent'}`
+  return `absolute select-none ${isSelected ? 'outline outline-2 outline-[#ff5f6d] outline-offset-2' : 'outline outline-1 outline-transparent'}`
 }
 
 function ImageElement({

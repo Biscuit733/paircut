@@ -26,11 +26,11 @@ export function TemplateEditor({ onBack, setToast }: TemplateEditorProps) {
     avatarBCircle: string
     avatarBSquare: string
   } | null>(null)
-  const canUseTemplate = Boolean(sourceImage && avatarA.croppedAreaPixels && avatarB.croppedAreaPixels)
+  const canUseTemplate = Boolean(sourceImage)
 
   useEffect(() => {
     let cancelled = false
-    if (!sourceImage || !avatarA.croppedAreaPixels || !avatarB.croppedAreaPixels) {
+    if (!sourceImage) {
       setAvatarPreviewUrls(null)
       return
     }
@@ -64,8 +64,8 @@ export function TemplateEditor({ onBack, setToast }: TemplateEditorProps) {
     return (
       <Panel className="grid min-h-[520px] place-items-center text-center">
         <div className="max-w-md">
-          <p className="text-xl font-semibold text-[#171717]">请先完成头像 A 和头像 B 的裁剪</p>
-          <p className="mt-3 text-sm leading-6 text-[#737373]">头像模板会直接读取原始图片和 A/B 裁剪参数，导出时重新高清渲染，不使用低清截图。</p>
+          <p className="text-xl font-semibold text-[#171717]">请先上传一张原图</p>
+          <p className="mt-3 text-sm leading-6 text-[#737373]">头像模板会读取原始图片和 A/B 默认裁剪位置，导出时重新高清渲染，不使用低清截图。</p>
           <Button className="mt-5" icon={<ArrowLeft size={16} />} variant="primary" onClick={onBack}>
             返回头像裁剪
           </Button>
@@ -77,7 +77,7 @@ export function TemplateEditor({ onBack, setToast }: TemplateEditorProps) {
   return (
     <div className="grid gap-4 lg:h-[calc(100vh-116px)] lg:grid-rows-[auto_minmax(0,1fr)] lg:overflow-hidden">
       <TemplateToolbar onBack={onBack} setToast={setToast} />
-      <div className="grid min-h-0 items-start gap-4 xl:grid-cols-[260px_minmax(0,1fr)_320px]">
+      <div className="grid min-h-0 items-start gap-4 xl:grid-cols-[320px_minmax(0,1fr)_320px]">
         <Panel className="xl:h-full xl:min-h-0 xl:overflow-auto">
           <TemplateGallery />
         </Panel>

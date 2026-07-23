@@ -92,7 +92,7 @@ export function TemplateToolbar({ onBack, setToast }: TemplateToolbarProps) {
   }
 
   return (
-    <div className="flex flex-wrap items-center gap-2 rounded-xl border border-[#e5e5e5] bg-white p-3">
+    <div className="flex flex-wrap items-center gap-2 rounded-lg border border-white/78 bg-white/72 p-3 shadow-[0_16px_44px_rgba(24,24,27,0.07),inset_0_1px_0_rgba(255,255,255,0.9)] backdrop-blur-xl">
       <Button onClick={onBack}>返回裁剪</Button>
       <Button disabled={undoStack.length === 0} icon={<Undo2 size={16} />} onClick={undo}>
         撤销
@@ -112,7 +112,7 @@ export function TemplateToolbar({ onBack, setToast }: TemplateToolbarProps) {
         </Button>
       ) : null}
       <ToolbarSelect label="尺寸">
-        <select className="h-10 min-w-[112px] appearance-none bg-white py-0 pl-3 pr-9 text-sm font-medium text-[#171717] outline-none" value={exportSize} onChange={(event) => setExportSize(event.target.value)}>
+        <select className="h-10 min-w-[112px] appearance-none bg-transparent py-0 pl-3 pr-9 text-sm font-medium text-[#161617] outline-none" value={exportSize} onChange={(event) => setExportSize(event.target.value)}>
           {exportSizes.map((size) => (
             <option key={size} value={size}>
               {size === 'custom' ? '自定义宽度' : exportSizeLabels[size]}
@@ -122,11 +122,11 @@ export function TemplateToolbar({ onBack, setToast }: TemplateToolbarProps) {
       </ToolbarSelect>
       {exportSize === 'custom' ? (
         <ToolbarInput label="宽度" hint={`${output.height}px 高`}>
-          <input className="h-10 w-24 bg-white px-3 text-sm font-medium text-[#171717] outline-none" min={360} type="number" value={customWidth} onChange={(event) => setCustomWidth(Number(event.target.value))} />
+          <input className="h-10 w-24 bg-transparent px-3 text-sm font-medium text-[#161617] outline-none" min={360} type="number" value={customWidth} onChange={(event) => setCustomWidth(Number(event.target.value))} />
         </ToolbarInput>
       ) : null}
       <ToolbarSelect label="格式">
-        <select className="h-10 min-w-[86px] appearance-none bg-white py-0 pl-3 pr-9 text-sm font-medium text-[#171717] outline-none" value={format} onChange={(event) => setFormat(event.target.value as ExportFormat)}>
+        <select className="h-10 min-w-[86px] appearance-none bg-transparent py-0 pl-3 pr-9 text-sm font-medium text-[#161617] outline-none" value={format} onChange={(event) => setFormat(event.target.value as ExportFormat)}>
           <option value="png">PNG</option>
           <option value="jpeg">JPG</option>
           <option value="webp">WebP</option>
@@ -144,8 +144,8 @@ export function TemplateToolbar({ onBack, setToast }: TemplateToolbarProps) {
 
 function ToolbarSelect({ label, children }: { label: string; children: ReactNode }) {
   return (
-    <label className="group inline-flex h-10 overflow-hidden rounded-lg border border-[#dedede] bg-white shadow-sm transition focus-within:border-[#171717] focus-within:ring-2 focus-within:ring-[#171717]/10">
-      <span className="grid min-w-12 place-items-center border-r border-[#eeeeee] bg-[#fbfaf7] px-3 text-xs font-semibold text-[#737373]">{label}</span>
+    <label className="group inline-flex h-10 overflow-hidden rounded-lg border border-white/80 bg-white/78 shadow-[inset_0_1px_0_rgba(255,255,255,0.9),0_1px_2px_rgba(20,20,20,0.05)] transition focus-within:border-[#171717] focus-within:ring-2 focus-within:ring-[#171717]/10">
+      <span className="grid min-w-12 place-items-center border-r border-[#eeeeee] bg-[#f7f6f2] px-3 text-xs font-semibold text-[#737373]">{label}</span>
       <span className="relative inline-flex items-center">
         {children}
         <ChevronDown className="pointer-events-none absolute right-3 text-[#8a8a8a] transition group-focus-within:text-[#171717]" size={15} />
@@ -156,10 +156,10 @@ function ToolbarSelect({ label, children }: { label: string; children: ReactNode
 
 function ToolbarInput({ label, hint, children }: { label: string; hint: string; children: ReactNode }) {
   return (
-    <label className="inline-flex h-10 overflow-hidden rounded-lg border border-[#dedede] bg-white shadow-sm transition focus-within:border-[#171717] focus-within:ring-2 focus-within:ring-[#171717]/10">
-      <span className="grid min-w-12 place-items-center border-r border-[#eeeeee] bg-[#fbfaf7] px-3 text-xs font-semibold text-[#737373]">{label}</span>
+    <label className="inline-flex h-10 overflow-hidden rounded-lg border border-white/80 bg-white/78 shadow-[inset_0_1px_0_rgba(255,255,255,0.9),0_1px_2px_rgba(20,20,20,0.05)] transition focus-within:border-[#171717] focus-within:ring-2 focus-within:ring-[#171717]/10">
+      <span className="grid min-w-12 place-items-center border-r border-[#eeeeee] bg-[#f7f6f2] px-3 text-xs font-semibold text-[#737373]">{label}</span>
       {children}
-      <span className="grid place-items-center border-l border-[#eeeeee] bg-[#fbfaf7] px-3 text-xs text-[#8a8a8a]">{hint}</span>
+      <span className="grid place-items-center border-l border-[#eeeeee] bg-[#f7f6f2] px-3 text-xs text-[#8a8a8a]">{hint}</span>
     </label>
   )
 }

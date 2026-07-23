@@ -52,18 +52,18 @@ export function App() {
 
   return (
     <div className="min-h-screen">
-      <header className="sticky top-0 z-40 border-b border-[#e5e5e5] bg-[#f5f4f0]/95 backdrop-blur">
-        <div className="mx-auto flex max-w-[1500px] flex-col gap-3 px-4 py-4 lg:flex-row lg:items-center lg:justify-between">
+      <header className="sticky top-0 z-40 border-b border-white/70 bg-[#f6f6f3]/82 shadow-[0_1px_0_rgba(20,20,20,0.04)] backdrop-blur-2xl">
+        <div className="mx-auto flex max-w-[1500px] flex-col gap-3 px-4 py-3 lg:flex-row lg:items-center lg:justify-between">
           <div className="flex items-center gap-3">
-            <div className="grid h-11 w-11 place-items-center rounded-xl bg-[#171717] text-white">
-              <Images size={22} />
+            <div className="grid h-11 w-11 place-items-center rounded-lg border border-white/80 bg-white/82 text-[#ff5f6d] shadow-[0_12px_30px_rgba(24,24,27,0.08),inset_0_1px_0_rgba(255,255,255,0.95)]">
+              <Images size={21} strokeWidth={2.2} />
             </div>
             <div>
-              <h1 className="text-xl font-semibold tracking-normal text-[#171717]">{settings.creatorName} 头像工坊</h1>
-              <p className="text-xs text-[#737373]">本地制作头像、展示模板与甜感拼图</p>
+              <h1 className="text-[21px] font-semibold tracking-normal text-[#161617]">{settings.creatorName} 头像工坊</h1>
+              <p className="text-xs text-[#7a7a80]">裁剪、模板、拼图，都在本地完成</p>
             </div>
           </div>
-          <nav className="flex flex-wrap gap-2">
+          <nav className="flex flex-wrap gap-2 rounded-lg border border-white/70 bg-white/46 p-1 shadow-[inset_0_1px_0_rgba(255,255,255,0.75)] backdrop-blur-xl">
             {modes.map((item) => (
               <Button key={item.id} icon={item.icon} variant={mode === item.id ? 'primary' : 'secondary'} onClick={() => setMode(item.id)}>
                 {item.label}

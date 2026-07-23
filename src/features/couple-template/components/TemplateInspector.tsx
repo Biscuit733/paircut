@@ -13,13 +13,13 @@ export function TemplateInspector() {
   return (
     <div className="grid gap-4">
       <Field label="模板背景">
-        <input className="h-10 rounded-lg border border-[#e5e5e5] px-2" type="color" value={workingTemplate.backgroundColor} onChange={(event) => updateTemplate({ backgroundColor: event.target.value })} />
+        <input className={colorControlClass} type="color" value={workingTemplate.backgroundColor} onChange={(event) => updateTemplate({ backgroundColor: event.target.value })} />
       </Field>
       <Button icon={<RotateCcw size={16} />} onClick={resetTemplate}>
         恢复模板默认设置
       </Button>
 
-      {!element ? <p className="rounded-lg bg-[#fbfaf7] p-4 text-sm leading-6 text-[#737373]">点击画布元素后，在这里调整文字、图片和色块。</p> : null}
+      {!element ? <p className="rounded-lg border border-white/70 bg-white/52 p-4 text-sm leading-6 text-[#6f6f75] shadow-[inset_0_1px_0_rgba(255,255,255,0.72)]">点击画布元素后，在这里调整文字、图片和色块。</p> : null}
       {element ? (
         <div className="grid gap-3 border-t border-[#eeeeee] pt-4">
           <div className="flex items-center justify-between gap-3">
@@ -35,13 +35,13 @@ export function TemplateInspector() {
           {element.type === 'text' ? (
             <>
               <Field label="文字内容">
-                <textarea className="min-h-24 rounded-lg border border-[#e5e5e5] px-3 py-2" value={element.text} onChange={(event) => updateElement(element.id, { text: event.target.value })} />
+                <textarea className={textareaClass} value={element.text} onChange={(event) => updateElement(element.id, { text: event.target.value })} />
               </Field>
               <Field label="字号" hint={`${element.fontSize}px`}>
                 <input className="range" max={96} min={12} type="range" value={element.fontSize} onChange={(event) => updateElement(element.id, { fontSize: Number(event.target.value) })} />
               </Field>
               <Field label="字体风格">
-                <select className="rounded-lg border border-[#e5e5e5] px-3 py-2" value={element.fontFamily} onChange={(event) => updateElement(element.id, { fontFamily: event.target.value })}>
+                <select className={controlClass} value={element.fontFamily} onChange={(event) => updateElement(element.id, { fontFamily: event.target.value })}>
                   {templateFontGroups.map((group) => (
                     <optgroup key={group} label={group}>
                       {templateFontOptions
@@ -56,17 +56,17 @@ export function TemplateInspector() {
                 </select>
               </Field>
               <Field label="文字颜色">
-                <input className="h-10 rounded-lg border border-[#e5e5e5] px-2" type="color" value={element.color} onChange={(event) => updateElement(element.id, { color: event.target.value })} />
+                <input className={colorControlClass} type="color" value={element.color} onChange={(event) => updateElement(element.id, { color: event.target.value })} />
               </Field>
               <Field label="字距" hint={`${element.letterSpacing ?? 0}px`}>
                 <input className="range" max={12} min={0} type="range" value={element.letterSpacing ?? 0} onChange={(event) => updateElement(element.id, { letterSpacing: Number(event.target.value) })} />
               </Field>
               <div className="grid grid-cols-2 gap-3">
                 <Field label="描边颜色">
-                  <input className="h-10 rounded-lg border border-[#e5e5e5] px-2" type="color" value={element.strokeColor ?? '#ffffff'} onChange={(event) => updateElement(element.id, { strokeColor: event.target.value })} />
+                  <input className={colorControlClass} type="color" value={element.strokeColor ?? '#ffffff'} onChange={(event) => updateElement(element.id, { strokeColor: event.target.value })} />
                 </Field>
                 <Field label="阴影颜色">
-                  <input className="h-10 rounded-lg border border-[#e5e5e5] px-2" type="color" value={normalizeColor(element.shadowColor) ?? '#171717'} onChange={(event) => updateElement(element.id, { shadowColor: event.target.value })} />
+                  <input className={colorControlClass} type="color" value={normalizeColor(element.shadowColor) ?? '#171717'} onChange={(event) => updateElement(element.id, { shadowColor: event.target.value })} />
                 </Field>
               </div>
               <Field label="描边宽度" hint={`${element.strokeWidth ?? 0}px`}>
@@ -76,7 +76,7 @@ export function TemplateInspector() {
                 <input className="range" max={24} min={0} type="range" value={element.shadowBlur ?? 0} onChange={(event) => updateElement(element.id, { shadowBlur: Number(event.target.value), shadowOffsetY: Number(event.target.value) > 0 ? (element.shadowOffsetY ?? 5) : 0 })} />
               </Field>
               <Field label="对齐">
-                <select className="rounded-lg border border-[#e5e5e5] px-3 py-2" value={element.textAlign} onChange={(event) => updateElement(element.id, { textAlign: event.target.value as 'left' | 'center' | 'right' })}>
+                <select className={controlClass} value={element.textAlign} onChange={(event) => updateElement(element.id, { textAlign: event.target.value as 'left' | 'center' | 'right' })}>
                   <option value="left">左对齐</option>
                   <option value="center">居中</option>
                   <option value="right">右对齐</option>
@@ -87,7 +87,7 @@ export function TemplateInspector() {
           {element.type === 'shape' ? (
             <>
               <Field label="填充颜色">
-                <input className="h-10 rounded-lg border border-[#e5e5e5] px-2" type="color" value={element.fill} onChange={(event) => updateElement(element.id, { fill: event.target.value })} />
+                <input className={colorControlClass} type="color" value={element.fill} onChange={(event) => updateElement(element.id, { fill: event.target.value })} />
               </Field>
               <Field label="圆角" hint={`${element.borderRadius ?? 0}px`}>
                 <input className="range" max={100} min={0} type="range" value={element.borderRadius ?? 0} onChange={(event) => updateElement(element.id, { borderRadius: Number(event.target.value) })} />
@@ -106,14 +106,14 @@ export function TemplateInspector() {
                 <input className="range" max={20} min={0} type="range" value={element.borderWidth ?? 0} onChange={(event) => updateElement(element.id, { borderWidth: Number(event.target.value) })} />
               </Field>
               <Field label="边框颜色">
-                <input className="h-10 rounded-lg border border-[#e5e5e5] px-2" type="color" value={element.borderColor ?? '#ffffff'} onChange={(event) => updateElement(element.id, { borderColor: event.target.value })} />
+                <input className={colorControlClass} type="color" value={element.borderColor ?? '#ffffff'} onChange={(event) => updateElement(element.id, { borderColor: event.target.value })} />
               </Field>
               <div className="grid grid-cols-2 gap-3">
                 <Field label="阴影颜色">
-                  <input className="h-10 rounded-lg border border-[#e5e5e5] px-2" type="color" value={normalizeColor(element.shadowColor) ?? '#171717'} onChange={(event) => updateElement(element.id, { shadowColor: event.target.value })} />
+                  <input className={colorControlClass} type="color" value={normalizeColor(element.shadowColor) ?? '#171717'} onChange={(event) => updateElement(element.id, { shadowColor: event.target.value })} />
                 </Field>
                 <Field label="阴影下移">
-                  <input className="rounded-lg border border-[#e5e5e5] px-3 py-2" type="number" value={element.shadowOffsetY ?? 0} onChange={(event) => updateElement(element.id, { shadowOffsetY: Number(event.target.value) })} />
+                  <input className={controlClass} type="number" value={element.shadowOffsetY ?? 0} onChange={(event) => updateElement(element.id, { shadowOffsetY: Number(event.target.value) })} />
                 </Field>
               </div>
               <Field label="图片阴影" hint={`${element.shadowBlur ?? 0}px`}>
@@ -133,10 +133,19 @@ function normalizeColor(color: string | undefined) {
   return color
 }
 
+const controlClass =
+  'h-10 w-full min-w-0 rounded-lg border border-white/80 bg-white/76 px-3 text-sm text-[#161617] shadow-[inset_0_1px_0_rgba(255,255,255,0.9),0_1px_2px_rgba(20,20,20,0.04)] outline-none transition focus:border-[#171717] focus:ring-2 focus:ring-[#171717]/10'
+
+const colorControlClass =
+  'h-10 w-full rounded-lg border border-white/80 bg-white/76 px-2 shadow-[inset_0_1px_0_rgba(255,255,255,0.9),0_1px_2px_rgba(20,20,20,0.04)] outline-none transition focus:border-[#171717] focus:ring-2 focus:ring-[#171717]/10'
+
+const textareaClass =
+  'min-h-24 w-full resize-y rounded-lg border border-white/80 bg-white/76 px-3 py-2 text-sm leading-6 text-[#161617] shadow-[inset_0_1px_0_rgba(255,255,255,0.9),0_1px_2px_rgba(20,20,20,0.04)] outline-none transition focus:border-[#171717] focus:ring-2 focus:ring-[#171717]/10'
+
 function PositionFields({ id, x, y, width, height }: { id: string; x: number; y: number; width: number; height: number }) {
   const updateElement = useCoupleTemplateStore((state) => state.updateElement)
   return (
-    <div className="grid grid-cols-2 gap-2 rounded-xl bg-[#fbfaf7] p-3">
+    <div className="grid grid-cols-2 gap-2 rounded-lg border border-white/72 bg-white/52 p-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.72)]">
       <CompactNumberField label="X" value={x} onChange={(value) => updateElement(id, { x: value })} />
       <CompactNumberField label="Y" value={y} onChange={(value) => updateElement(id, { y: value })} />
       <CompactNumberField label="宽" value={width} onChange={(value) => updateElement(id, { width: value })} />
@@ -150,7 +159,7 @@ function CompactNumberField({ label, value, onChange }: { label: string; value: 
     <label className="grid min-w-0 gap-1.5 text-sm text-[#525252]">
       <span className="text-xs font-medium text-[#737373]">{label}</span>
       <input
-        className="h-9 min-w-0 w-full rounded-lg border border-[#dedede] bg-white px-2.5 text-sm text-[#171717] outline-none transition focus:border-[#171717] focus:ring-2 focus:ring-[#171717]/10"
+        className="h-9 w-full min-w-0 rounded-lg border border-white/80 bg-white/78 px-2.5 text-sm text-[#161617] shadow-[inset_0_1px_0_rgba(255,255,255,0.86),0_1px_2px_rgba(20,20,20,0.04)] outline-none transition focus:border-[#171717] focus:ring-2 focus:ring-[#171717]/10"
         inputMode="decimal"
         type="number"
         value={formatInspectorNumber(value)}
@@ -164,7 +173,7 @@ function ImageAdjustmentFields({ id, adjustment }: { id: string; adjustment: Tem
   const updateElement = useCoupleTemplateStore((state) => state.updateElement)
   const patch = (next: Partial<TemplateImageAdjustment>) => updateElement(id, { adjustment: { ...adjustment, ...next } })
   return (
-    <div className="grid gap-3 rounded-xl bg-[#fbfaf7] p-3">
+    <div className="grid gap-3 rounded-lg border border-white/72 bg-white/52 p-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.72)]">
       <Field label="图片内部缩放" hint={adjustment.scale.toFixed(2)}>
         <input className="range" max={2.5} min={0.5} step={0.01} type="range" value={adjustment.scale} onChange={(event) => patch({ scale: Number(event.target.value) })} />
       </Field>
