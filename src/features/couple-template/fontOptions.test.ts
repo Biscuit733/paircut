@@ -14,6 +14,20 @@ describe('template font options', () => {
     ]))
   })
 
+  it('includes cute open-source Chinese font choices', () => {
+    const labels = templateFontOptions.map((option) => option.label)
+
+    expect(labels).toEqual(expect.arrayContaining([
+      '站酷快乐体',
+      '马善政手写',
+      '站酷庆科黄油',
+      '站酷小薇',
+      '龙藏体',
+      '志莽行书',
+      '刘建毛草',
+    ]))
+  })
+
   it('keeps font family values unique', () => {
     const values = templateFontOptions.map((option) => option.value)
 

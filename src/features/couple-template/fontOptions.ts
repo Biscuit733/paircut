@@ -1,7 +1,7 @@
 export type TemplateFontOption = {
   label: string
   value: string
-  group: '可爱英文' | '手写签名' | '中文常用' | '基础字体'
+  group: '可爱英文' | '可爱中文' | '手写签名' | '中文常用' | '基础字体'
 }
 
 export const templateFontOptions: TemplateFontOption[] = [
@@ -14,6 +14,13 @@ export const templateFontOptions: TemplateFontOption[] = [
   { group: '可爱英文', label: 'Short Stack 手账', value: '"Short Stack", "Microsoft YaHei", cursive' },
   { group: '可爱英文', label: 'Patrick Hand 笔记', value: '"Patrick Hand", "Microsoft YaHei", cursive' },
   { group: '可爱英文', label: 'Luckiest Guy 厚标题', value: '"Luckiest Guy", "Arial Black", "Microsoft YaHei", sans-serif' },
+  { group: '可爱中文', label: '站酷快乐体', value: '"ZCOOL KuaiLe", "Microsoft YaHei", sans-serif' },
+  { group: '可爱中文', label: '马善政手写', value: '"Ma Shan Zheng", "Microsoft YaHei", cursive' },
+  { group: '可爱中文', label: '站酷庆科黄油', value: '"ZCOOL QingKe HuangYou", "Microsoft YaHei", sans-serif' },
+  { group: '可爱中文', label: '站酷小薇', value: '"ZCOOL XiaoWei", "Microsoft YaHei", serif' },
+  { group: '可爱中文', label: '龙藏体', value: '"Long Cang", "Microsoft YaHei", cursive' },
+  { group: '可爱中文', label: '志莽行书', value: '"Zhi Mang Xing", "Microsoft YaHei", cursive' },
+  { group: '可爱中文', label: '刘建毛草', value: '"Liu Jian Mao Cao", "Microsoft YaHei", cursive' },
   { group: '手写签名', label: 'Pacifico 甜甜签名', value: '"Pacifico", "Great Vibes", cursive' },
   { group: '手写签名', label: 'Great Vibes 高级花体', value: '"Great Vibes", "Parisienne", cursive' },
   { group: '手写签名', label: 'Parisienne 轻盈签名', value: '"Parisienne", "Great Vibes", cursive' },
