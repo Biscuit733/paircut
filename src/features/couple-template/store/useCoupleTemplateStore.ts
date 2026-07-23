@@ -22,6 +22,7 @@ type CoupleTemplateStore = {
   setCanvasZoom: (zoom: number) => void
   setExportSize: (size: string) => void
   setCustomWidth: (width: number) => void
+  restoreProjectTemplate: (templateId: string, exportSize: string, customWidth: number) => void
 }
 
 const initialTemplate = cloneTemplate(couplePosterTemplates[0])
@@ -85,4 +86,8 @@ export const useCoupleTemplateStore = create<CoupleTemplateStore>((set, get) => 
   setCanvasZoom: (canvasZoom) => set({ canvasZoom }),
   setExportSize: (exportSize) => set({ exportSize }),
   setCustomWidth: (customWidth) => set({ customWidth }),
+  restoreProjectTemplate: (templateId, exportSize, customWidth) => {
+    const template = couplePosterTemplates.find((item) => item.id === templateId) ?? couplePosterTemplates[0]
+    set({ selectedTemplateId: template.id, workingTemplate: cloneTemplate(template), selectedElementId: null, exportSize, customWidth, undoStack: [], redoStack: [] })
+  },
 }))

@@ -12,6 +12,8 @@ import type { CropConfig, ExportFormat } from '../../cropper/types'
 import { downloadBlob, extensionForFormat, sanitizeFileName } from '../../../utils/file'
 import { exportCoupleZip } from '../../export/exportZip'
 import type { ToastState } from '../../../components/ui/Toast'
+import { ProjectPanel } from '../../project/components/ProjectPanel'
+import { useProjectStore } from '../../project/store/useProjectStore'
 
 type CoupleCropperProps = {
   onOpenTemplates: () => void
@@ -31,7 +33,9 @@ export function CoupleCropper({ onOpenTemplates, setToast }: CoupleCropperProps)
     swapAvatars,
     copyAToB,
     resetAvatar,
+    restoreAvatarState,
   } = useCoupleStore()
+  const selectedDraft = useProjectStore((state) => state.drafts.find((draft) => draft.id === state.selectedDraftId) ?? null)
   const [guide, setGuide] = useState<'grid' | 'cross' | 'safe' | 'none'>('grid')
   const [format, setFormat] = useState<ExportFormat>('png')
   const [quality, setQuality] = useState(0.92)
@@ -107,11 +111,15 @@ export function CoupleCropper({ onOpenTemplates, setToast }: CoupleCropperProps)
     <div className="grid gap-4 lg:grid-cols-[300px_minmax(0,1fr)_300px]">
       <Panel className="grid content-start gap-4">
         <ImageUploader
-          description="上传一张 4:3 情侣原图，Biscuit 情头工坊会给 A/B 头像生成左右两侧的初始裁剪位置。"
+          description="上传一张情侣或双人原图，Biscuit 情头工坊会给 A/B 头像生成左右两侧的初始裁剪位置。"
           label="上传情侣原图"
-          onImages={(assets) => setSourceImage(assets[0])}
+          onImages={(assets) => {
+            setSourceImage(assets[0])
+            if (selectedDraft) restoreAvatarState(selectedDraft.avatarA, selectedDraft.avatarB)
+          }}
         />
         <ImageMeta asset={sourceImage} />
+        <ProjectPanel setToast={setToast} />
         <div className="grid gap-2">
           <Button onClick={splitEvenly}>左右平均分配</Button>
           <Button onClick={swapAvatars}>交换 A/B</Button>
@@ -148,7 +156,7 @@ export function CoupleCropper({ onOpenTemplates, setToast }: CoupleCropperProps)
         ) : (
           <Panel className="grid min-h-[520px] place-items-center text-center text-[#737373]">
             <div>
-              <p className="text-lg font-medium text-[#171717]">先上传一张情侣原图</p>
+              <p className="text-lg font-medium text-[#171717]">先上传一张原图</p>
               <p className="mt-2 text-sm">所有处理都在浏览器本地完成，不会上传到服务器。</p>
             </div>
           </Panel>

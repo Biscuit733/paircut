@@ -17,6 +17,7 @@ type CoupleStore = {
   setActiveAvatar: (avatar: CoupleAvatarKey) => void
   updateAvatar: (avatar: CoupleAvatarKey, patch: Partial<CropConfig>) => void
   updateSingleCrop: (patch: Partial<CropConfig>) => void
+  restoreAvatarState: (avatarA: CropConfig, avatarB: CropConfig) => void
   splitEvenly: () => void
   swapAvatars: () => void
   copyAToB: () => void
@@ -74,6 +75,7 @@ export const useCoupleStore = create<CoupleStore>((set) => ({
         : { avatarB: { ...state.avatarB, ...patch } },
     ),
   updateSingleCrop: (patch) => set((state) => ({ singleCrop: { ...state.singleCrop, ...patch } })),
+  restoreAvatarState: (avatarA, avatarB) => set({ avatarA, avatarB, activeAvatar: 'a' }),
   splitEvenly: () =>
     set((state) => ({
       avatarA: { ...state.avatarA, crop: { x: 70, y: 0 }, zoom: 1 },
