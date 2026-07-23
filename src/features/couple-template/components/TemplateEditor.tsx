@@ -79,7 +79,7 @@ export function TemplateEditor({ onBack, setToast }: TemplateEditorProps) {
       <TemplateToolbar onBack={onBack} setToast={setToast} />
       <div className="grid min-h-0 items-start gap-4 xl:grid-cols-[320px_minmax(0,1fr)_320px]">
         <Panel className="xl:h-full xl:min-h-0 xl:overflow-auto">
-          <TemplateGallery />
+          <TemplateGallery sourceUrls={sourceUrls} />
         </Panel>
         <TemplateCanvas sourceUrls={sourceUrls} template={workingTemplate} />
         <Panel className="xl:h-full xl:min-h-0 xl:overflow-auto">

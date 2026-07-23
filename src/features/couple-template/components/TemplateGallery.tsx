@@ -4,8 +4,9 @@ import { TemplateThumbnail } from './TemplateThumbnail'
 import { useWorkshopSettingsStore } from '../../workshop-settings/store/useWorkshopSettingsStore'
 import { applyTemplateDefaults } from '../utils/applyTemplateDefaults'
 import { getTemplateMeta } from '../templates/templateMeta'
+import type { TemplateThumbnailSources } from '../utils/renderTemplateThumbnail'
 
-export function TemplateGallery() {
+export function TemplateGallery({ sourceUrls }: { sourceUrls: TemplateThumbnailSources }) {
   const { selectedTemplateId, setTemplate } = useCoupleTemplateStore()
   const settings = useWorkshopSettingsStore((state) => state.settings)
   return (
@@ -34,7 +35,7 @@ export function TemplateGallery() {
                     type="button"
                     onClick={() => setTemplate(template.id)}
                   >
-                    <TemplateThumbnail template={previewTemplate} />
+                    <TemplateThumbnail sourceUrls={sourceUrls} template={previewTemplate} />
                     <span className="flex items-center justify-between gap-2">
                       <span className="truncate text-sm font-semibold text-[#1d1d1f]">{template.name}</span>
                       <span className={`shrink-0 rounded-full px-2 py-0.5 text-[11px] font-medium ${isSelected ? 'bg-[#ff5f6d] text-white' : 'bg-[#f1f0ec] text-[#7a7a80]'}`}>
